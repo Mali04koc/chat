@@ -36,24 +36,40 @@ if(isset($_POST["save-profile-edites"])) {
                 "range"=>array(-1, 1)
             )
         ));
-        
+
+        // İlk profil resmi yükleme işlemini bul
         if(!empty($_FILES["picture"]["name"])) {
-            $validate->check($_FILES, array(
-                "picture"=>array(
-                    "name"=>"Picture",
-                    "image"=>"image"
-                )
-            ));
+            // Mevcut kodu buradan itibaren silin
+            $generatedName = Hash::unique();
+            $generatedName = htmlspecialchars($generatedName);
+
+            $file = $_FILES["picture"]["name"];
+            $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
+
+            $targetFile = $profilePicturesDir . $generatedName . $original_extension;
+            if (move_uploaded_file($_FILES["picture"]["tmp_name"], $targetFile)) {
+                $user->setPropertyValue("picture", $targetFile);
+            } else {
+                $validate->addError("Sorry, there was an error uploading your profile picture.");
+            }
         }
 
+// Kapak resmi yükleme işlemini bul
         if(!empty($_FILES["cover"]["name"])) {
-            $validate->check($_FILES, array(
-                "cover"=>array(
-                    "name"=>"Cover",
-                    "image"=>"image"
-                )
-            ));
+            $generatedName = Hash::unique();
+            $generatedName = htmlspecialchars($generatedName);
+
+            $file = $_FILES["cover"]["name"];
+            $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
+
+            $targetFile = $coversDir . $generatedName . $original_extension;
+            if (move_uploaded_file($_FILES["cover"]["tmp_name"], $targetFile)) {
+                $user->setPropertyValue("cover", $targetFile);
+            } else {
+                $validate->addError("Sorry, there was an error uploading your profile picture.");
+            }
         }
+
 
         if($validate->passed()) {
             // Set textual data
