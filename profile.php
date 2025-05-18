@@ -64,70 +64,39 @@ if(isset($_POST["save-profile-edites"])) {
 
             $profilePicturesDir = 'data/users/' . $user->getPropertyValue("username") . "/media/pictures/";
             $coversDir = 'data/users/' . $user->getPropertyValue("username") . "/media/covers/";
-            if (!is_dir($profilePicturesDir)) {
-                mkdir($profilePicturesDir, 0777, true);
-            }
-            if (!is_dir($coversDir)) {
-                mkdir($coversDir, 0777, true);
-            }
-// Profil ve Kapak Resimleri İçin Dizini Kontrol Et
-            $profilePicturesDir = 'data/users/' . $user->getPropertyValue("username") . "/media/pictures/";
-            $coversDir = 'data/users/' . $user->getPropertyValue("username") . "/media/covers/";
 
-// Dizinler yoksa oluştur
-            if (!is_dir($profilePicturesDir)) {
-                mkdir($profilePicturesDir, 0755, true);
-            }
-            if (!is_dir($coversDir)) {
-                mkdir($coversDir, 0755, true);
-            }
+            // First we check if the user is changed the image
+            if(!empty($_FILES["picture"]["name"])) {
+                // If so we generate a unique hash to name the image
+                $generatedName = Hash::unique();
+                $generatedName = htmlspecialchars($generatedName);
 
-// Profil Resmi Yükleme
-            if (!empty($_FILES["picture"]["name"])) {
-                if (is_uploaded_file($_FILES["picture"]["tmp_name"])) {
-                    $generatedName = Hash::unique();
-                    $original_extension = strtolower(pathinfo($_FILES["picture"]["name"], PATHINFO_EXTENSION));
-                    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                // Then we fetch the image type t o concatenate it with the generated name
+                $file = $_FILES["picture"]["name"];
+                $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
 
-                    if (in_array($original_extension, $allowed_extensions)) {
-                        $targetFile = $profilePicturesDir . $generatedName . '.' . $original_extension;
-                        if (move_uploaded_file($_FILES["picture"]["tmp_name"], $targetFile)) {
-                            $user->setPropertyValue("picture", $targetFile);
-                        } else {
-                            echo "Profil resmi yüklenirken bir hata oluştu.";
-                        }
-                    } else {
-                        echo "Sadece JPG, JPEG, PNG ve GIF dosyalarına izin verilir.";
-                    }
+                $targetFile = $profilePicturesDir . $generatedName . $original_extension;
+                if (move_uploaded_file($_FILES["picture"]["tmp_name"], $targetFile)) {
+                    $user->setPropertyValue("picture", $targetFile);
                 } else {
-                    echo "Geçersiz profil resmi dosyası.";
+                    $validate->addError("Sorry, there was an error uploading your profile picture.");
                 }
-            } else {
-                echo "Lütfen bir dosya seçin.";
             }
 
-// Kapak Resmi Yükleme
             if(!empty($_FILES["cover"]["name"])) {
-                if (is_uploaded_file($_FILES["cover"]["tmp_name"])) {
-                    $generatedName = Hash::unique();
-                    $original_extension = strtolower(pathinfo($_FILES["cover"]["name"], PATHINFO_EXTENSION));
-                    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                $generatedName = Hash::unique();
+                $generatedName = htmlspecialchars($generatedName);
+                
+                $file = $_FILES["cover"]["name"];
+                $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
 
-                    if (in_array($original_extension, $allowed_extensions)) {
-                        $targetFile = $coversDir . $generatedName . '.' . $original_extension;
-                        if (move_uploaded_file($_FILES["cover"]["tmp_name"], $targetFile)) {
-                            $user->setPropertyValue("cover", $targetFile);
-                        } else {
-                            $validate->addError("Kapak resmi yüklenirken bir hata oluştu.");
-                        }
-                    } else {
-                        $validate->addError("Sadece JPG, JPEG, PNG ve GIF dosyalarına izin verilir.");
-                    }
+                $targetFile = $coversDir . $generatedName . $original_extension;
+                if (move_uploaded_file($_FILES["cover"]["tmp_name"], $targetFile)) {
+                    $user->setPropertyValue("cover", $targetFile);
                 } else {
-                    $validate->addError("Geçersiz kapak resmi dosyası.");
+                    $validate->addError("Sorry, there was an error uploading your profile picture.");
                 }
             }
-
 
             $user->update();
         } else {
@@ -167,7 +136,7 @@ if(isset($_POST["logout"])) {
 usort($posts, 'post_date_latest_sort');
 
 function post_date_latest_sort($post1, $post2) {
-    return ($post1->get_property('post_date') < $post2->get_property('post_date')) ? 0 : (($post1->get_property('post_date') > $post2->get_property('post_date')) ? -1 : 1);
+    return $post1->get_property('post_date') < $post2->get_property('post_date') ? 0 : ($post1->get_property('post_date') > $post2->get_property('post_date')) ? -1 : 1;
 }
 
 function is_dir_empty($dir) {
