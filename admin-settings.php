@@ -26,43 +26,7 @@ $bio = $user->getPropertyValue("bio");
 $picture = $root . (empty($user->getPropertyValue("picture")) ? "public/assets/images/logos/logo512.png" : $user->getPropertyValue("picture"));
 $cover = $root . $user->getPropertyValue("cover");
 $profile = $root . "profile.php?username=" . $user->getPropertyValue("username");
-$private = $user->getPropertyValue("private");
 
-$user_metadata = array(
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-    array(
-        "label"=>"",
-        "content"=>""
-    ),
-);
-
-$metadata = $user->get_metadata();
-$count = 0;
-foreach($metadata as $mdata) {
-    $user_metadata[$count]["label"] = $mdata->label;
-    $user_metadata[$count]["content"] = $mdata->content;
-
-    $count++;
-}
 
 include_once 'functions/sanitize_text.php';
 if(isset($_POST["save-changes"])) {
@@ -85,10 +49,6 @@ if(isset($_POST["save-changes"])) {
 
         $new_bio = sanitize_text($_POST["bio"]);
         $new_username = sanitize_text($_POST["username"]);
-        $new_private = is_numeric($_POST["private"]) 
-                        && ($_POST["private"] == '1' || $_POST["private"] == '-1') 
-                        ? $_POST["private"] 
-                        : $user->getPropertyValue("private");
 
         $validator = new Validation();
         // Validate bio
@@ -134,15 +94,8 @@ if(isset($_POST["save-changes"])) {
             $user->setPropertyValue("firstname", $new_firstname);
             $user->setPropertyValue("lastname", $new_lastname);
             $user->setPropertyValue("bio", $new_bio);
-            $user->setPropertyValue("private", $new_private);
 
-            /*
-                IMPORTANT: notice when we change the username in th database we need also to change it in data folder where the user
-                images and posts and covers are stored so after storing the assets and change the database we have to change the folder
-                name as well !!!
-                IMPORTANT: If the user change the cover or picture or both but not username, we don't have to rename the directory !
-                Notice here, if the user has already a picture, its path is stored with the older username, so we use $username not $new_username
-            */
+           
             $profilePicturesDir = 'data/users/' . $username . "/media/pictures/";
             $coversDir = 'data/users/' . $username . "/media/covers/";
 
@@ -201,36 +154,7 @@ if(isset($_POST["save-changes"])) {
                 $user->setPropertyValue("username", $new_username);
             }
 
-            // Get the new version labels along with their contents
-            $new_user_metadata = array(
-                array(
-                    "label"=>sanitize_text($_POST["label1"]),
-                    "content"=>sanitize_text($_POST["content1"])
-                ),
-                array(
-                    "label"=>sanitize_text($_POST["label2"]),
-                    "content"=>sanitize_text($_POST["content2"])
-                ),
-                array(
-                    "label"=>sanitize_text($_POST["label3"]),
-                    "content"=>sanitize_text($_POST["content3"])
-                ),
-                array(
-                    "label"=>sanitize_text($_POST["label4"]),
-                    "content"=>sanitize_text($_POST["content4"])
-                ),
-                array(
-                    "label"=>sanitize_text($_POST["label5"]),
-                    "content"=>sanitize_text($_POST["content5"])
-                ),
-                array(
-                    "label"=>sanitize_text($_POST["label6"]),
-                    "content"=>sanitize_text($_POST["content6"])
-                ),
-            );
-
-            $user->set_metadata($new_user_metadata);
-
+          
             $user->update();
 
             $fullname = $new_firstname . (empty($new_lastname) ? "" : " " . $new_lastname);
@@ -239,8 +163,6 @@ if(isset($_POST["save-changes"])) {
             $picture = $root . $user->getPropertyValue("picture");
             $cover = $root . $user->getPropertyValue("cover");
             $profile = $root . "profile.php?username=" . $new_username;
-            $private = $new_private;
-            $user_metadata = $new_user_metadata;
         } else {
             foreach($validator->errors() as $error) {
                 echo $error . "<br>";
@@ -301,7 +223,7 @@ function recurse_copy($src,$dst) {
 </head>
 <body>
 <main>
-    <?php require_once "page_parts/settings/left-panel.php" ?>
+    <?php require_once "page_parts/settings/admin-left-panel.php" ?>
     <div id="global-container">
         <div id="setting-master-container">
             <h1 class="no-margin">Profili Düzenle</h1>
@@ -320,7 +242,7 @@ function recurse_copy($src,$dst) {
                     <textarea form="save-form" spellcheck="false" name="bio" id="bio" class="setting-input-text-style textarea-style"><?php echo $bio; ?></textarea>
                 </div>
                 <div id="profile-asset-wrapper" class="flex">
-                    <a href="<?php echo $profile; ?>" id="assets-wrapper">
+                    <a href="" id="assets-wrapper">
                         <div id="setting-cover-container">
                             <img src="<?php echo $cover; ?>" class="setting-cover" alt="">
                         </div>
@@ -345,44 +267,9 @@ function recurse_copy($src,$dst) {
                             <input type="file" form="save-form" name="avatar" class="block" id="avatar-input">
                             <p class="no-margin input-hint">PNG, JPG, JPEG veya GIF. En fazla 5 MB. 400x400px boyutuna getirilecek.</p>
                         </div>
-                        <div style="margin-top: 10px">
-                            <label for="avatar-input" class="setting-label" style="font-size: 16px; margin-bottom: 5px">Gizli Hesap</label>
-                            <div class="flex">
-                                <div class="toggle-button-style-2" id="private-account-button"></div>
-                                <div id="private-account-status">(OFF)</div>
-                            </div>
-                            <input name="private" form="save-form" value="<?php echo $private; ?>" id="private-account-state" type="hidden">
-                        </div>
                     </div>
                 </div>
-                <div style="margin-top: 26px">
-                    <label for="fullname" class="setting-label1">Profil Bilgileri</label>
-                    <p class="input-hint">6 farklı özelliğin profilinde gösterilir.</p>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["label"] ?>" placeholder="Label" name="label1" id="label1">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["content"] ?>" placeholder="Content" name="content1" id="content1">
-                    </div>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["label"] ?>" placeholder="Label" name="label2" id="label2">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["content"] ?>" placeholder="Content" name="content2" id="content2">
-                    </div>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["label"] ?>" placeholder="Label" name="label3" id="label3">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["content"] ?>" placeholder="Content" name="content3" id="content3">
-                    </div>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["label"] ?>" placeholder="Label" name="label4" id="label4">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["content"] ?>" placeholder="Content" name="content4" id="content4">
-                    </div>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["label"] ?>" placeholder="Label" name="label5" id="label5">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["content"] ?>" placeholder="Content" name="content5" id="content5">
-                    </div>
-                    <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["label"] ?>" placeholder="Label" name="label6" id="label6">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["content"] ?>" placeholder="Content" name="content6" id="content6">
-                    </div>
-                </div>
+               
 
                 <form action="" method="POST" id="save-form" enctype="multipart/form-data">
                     <input type="hidden" name="token_save_changes" value="<?php echo Token::generate("saveEdits"); ?>">

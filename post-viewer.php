@@ -144,7 +144,7 @@ foreach (scandir($directory) as $file) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>V01D47</title>
+<title>NEW WORLD</title>
 <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.ico' />
 <link rel="stylesheet" href="public/css/header.css">
 <link rel="stylesheet" href="public/css/global.css">
@@ -219,7 +219,7 @@ foreach (scandir($directory) as $file) {
                 <div style="margin-top: 8px">
                     <span class="hidden-post-text no-display"><?php echo $post_text_data; ?></span>
                     <span class="post-text"><?php echo $post_text_data; ?></span>
-                    <div class="collapse-text">See more</div>
+                    <div class="collapse-text">Daha fazlasını gör</div>
                 </div>
             </div>
             <!-- post reactions number, comments and shares -->
@@ -240,12 +240,12 @@ foreach (scandir($directory) as $file) {
                 </div>
                 <div class="pointer row-v-flex reaction-button comment" style="flex: 4">
                     <img src="public/assets/images/icons/black-comment.png" class="reaction-button-image comment-button-image" alt="">
-                    <a class="regular-text-style-2 bold">Comment</a>
+                    <a class="regular-text-style-2 bold">Yorum</a>
                 </div>
                 <div class="relative share-button-container">
                     <div class="pointer row-v-flex reaction-button share">
                         <img src="public/assets/images/icons/reply-black.png" class="reaction-button-image share-button-image" alt="">
-                        <a class="regular-text-style-2 bold">Share</a>
+                        <a class="regular-text-style-2 bold">Paylaş</a>
                     </div>
                     <div class="share-animation-container flex-row-column">
                         <div class="share-animation-outer-circle-container">

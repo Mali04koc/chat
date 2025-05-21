@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `channel`
+--   Kanal tablosu yapısı
 --
 
 CREATE TABLE `channel` (
@@ -38,7 +38,7 @@ CREATE TABLE `channel` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comment`
+-- Yorum tablosu yapısı
 --
 
 CREATE TABLE `comment` (
@@ -48,12 +48,15 @@ CREATE TABLE `comment` (
   `comment_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `comment_edit_date` timestamp NULL DEFAULT NULL,
   `comment_text` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4; 
+
+/* Engine=InnoDB ile sql de hangi depolama motorunu seçtik, bunu yazmasak varsayılan depolama motorunu
+seçicekti.utf8 yerine bu dil paketini seçme sebebimiz mesajlarda emoji gönderebilmek */
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `like`
+-- Beğen tablosu yapısı
 --
 
 CREATE TABLE `like` (
@@ -66,7 +69,7 @@ CREATE TABLE `like` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `message`
+-- Mesaj tablosu yapısı
 --
 
 CREATE TABLE `message` (
@@ -81,8 +84,7 @@ CREATE TABLE `message` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `message_recipient`
---
+-- mesaj alıcısı tablosu yapısı
 
 CREATE TABLE `message_recipient` (
   `id` int(11) NOT NULL,
@@ -91,10 +93,11 @@ CREATE TABLE `message_recipient` (
   `is_read` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/* tinyint adı gibi küçük sayısal değerler için kullanılır.*/
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post`
+-- Gönder tablosu yapısı
 --
 
 CREATE TABLE `post` (
@@ -111,10 +114,14 @@ CREATE TABLE `post` (
   `post_shared_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+/* timestamp de aynı datetime gibi,aralarındaki fark timestamp ile 
+tablonun oluşturulma veya güncellenme zamanını otomatik olarak izlenir.Datetime ise önemli tarihleri
+tutar.*/
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post_place`
+-- 
+-- Gönderi yeri tablosu yapısı
 --
 
 CREATE TABLE `post_place` (
@@ -123,7 +130,7 @@ CREATE TABLE `post_place` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `post_place`
+-- Gönderi yeri tablosuna veri ekliyoruz
 --
 
 INSERT INTO `post_place` (`id`, `post_place`) VALUES
@@ -133,7 +140,7 @@ INSERT INTO `post_place` (`id`, `post_place`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `post_visibility`
+-- Gönderi görünürlük tablosu yapısı
 --
 
 CREATE TABLE `post_visibility` (
@@ -142,7 +149,7 @@ CREATE TABLE `post_visibility` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `post_visibility`
+-- Gönderi görünürlük tablosuna veri ekliyoruz
 --
 
 INSERT INTO `post_visibility` (`id`, `visibility`) VALUES
@@ -153,7 +160,7 @@ INSERT INTO `post_visibility` (`id`, `visibility`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users_session`
+-- Kullanıcı oturum tablosu yapısı , bununla kullanıcıların oturum bilgilerini tutacağız
 --
 
 CREATE TABLE `users_session` (
@@ -165,7 +172,7 @@ CREATE TABLE `users_session` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_follow`
+-- Kullanıcı takip tablosu yapısı
 --
 
 CREATE TABLE `user_follow` (
@@ -177,7 +184,7 @@ CREATE TABLE `user_follow` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_info`
+-- Kullanıcı bilgileri tablosu yapısı
 --
 
 CREATE TABLE `user_info` (
@@ -200,7 +207,7 @@ CREATE TABLE `user_info` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_metadata`
+-- Kullanıcının sistemdeki bilgileri tablosuna veri ekliyoruz
 --
 
 CREATE TABLE `user_metadata` (
@@ -213,7 +220,7 @@ CREATE TABLE `user_metadata` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_relation`
+-- Kullanıcı ilişkileri tablosu yapısı`
 --
 
 CREATE TABLE `user_relation` (
@@ -227,7 +234,7 @@ CREATE TABLE `user_relation` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `user_type`
+-- Kullanıcı türü tablosu yapısı admin veya normal kullanıcıları ayırmak için
 --
 
 CREATE TABLE `user_type` (
@@ -237,7 +244,7 @@ CREATE TABLE `user_type` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `user_type`
+-- Kullanıcı türü tablosuna veri ekliyoruz
 --
 
 INSERT INTO `user_type` (`id`, `type_name`, `permission`) VALUES
@@ -247,7 +254,7 @@ INSERT INTO `user_type` (`id`, `type_name`, `permission`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `writing_message_notifier`
+-- Kullanıcı mesaj yazma bildirimi tablosu yapısı
 --
 
 CREATE TABLE `writing_message_notifier` (
@@ -256,200 +263,200 @@ CREATE TABLE `writing_message_notifier` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Indexes for dumped tables
+-- Tablolar arası ilişkiler ve keyleri ekliyoruz
 --
 
 --
--- Indexes for table `channel`
+-- Kanal tablosu için indexler
 --
 ALTER TABLE `channel`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `comment`
+-- Yorum tablosu için indexler
 --
 ALTER TABLE `comment`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `like`
+-- Beğen tablosu için indexler
 --
 ALTER TABLE `like`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `unique_index` (`post_id`,`user_id`);
 
 --
--- Indexes for table `message`
+-- Mesaj tablosu için indexler
 --
 ALTER TABLE `message`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `message_recipient`
+-- Mesaj Alıcısı tablosu için indexler`
 --
 ALTER TABLE `message_recipient`
   ADD PRIMARY KEY (`id`),
   ADD KEY `message_id` (`message_id`);
 
 --
--- Indexes for table `post`
+-- Gönder tablosu için indexler
 --
 ALTER TABLE `post`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fk_post_place` (`post_place`);
 
 --
--- Indexes for table `post_place`
+-- Gönderi yeri tablosu için indexler
 --
 ALTER TABLE `post_place`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `post_visibility`
+-- Gönderi görünürlük tablosu için indexler
 --
 ALTER TABLE `post_visibility`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `users_session`
+-- Kullanıcı oturum tablosu için indexler
 --
 ALTER TABLE `users_session`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `user_follow`
+-- Kullanıcı takip tablosu için indexler
 --
 ALTER TABLE `user_follow`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `follow_unique` (`follower_id`,`followed_id`);
 
 --
--- Indexes for table `user_info`
+-- Kullanıcı bilgileri tablosu için indexler
 --
 ALTER TABLE `user_info`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- Indexes for table `user_metadata`
+-- Kullanıcının sistemdeki bilgileri tablosu için indexler
 --
 ALTER TABLE `user_metadata`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_label_UK` (`label`,`user_id`);
 
 --
--- Indexes for table `user_relation`
+-- Kullanıcı ilişkileri tablosu için indexler
 --
 ALTER TABLE `user_relation`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `UNIQUE_RELATION` (`from`,`to`,`status`);
 
 --
--- Indexes for table `user_type`
+-- Kullanıcı türü tablosu için indexler
 --
 ALTER TABLE `user_type`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- Tablolarda otomatik artış ayarları
 --
 
 --
--- AUTO_INCREMENT for table `channel`
+-- Kanal tablosu için otomatik artış ayarları 
 --
 ALTER TABLE `channel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `comment`
+-- Yorum tablosu için otomatik artış ayarları
 --
 ALTER TABLE `comment`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `like`
+--  Beğen tablosu için otomatik artış ayarları
 --
 ALTER TABLE `like`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `message`
+-- Mesaj tablosu için otomatik artış ayarları
 --
 ALTER TABLE `message`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `message_recipient`
+-- Mesaj alıcı tablosu için otomatik artış ayarları
 --
 ALTER TABLE `message_recipient`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `post`
+-- Gönder tablosu için otomatik artış ayarları
 --
 ALTER TABLE `post`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `post_place`
+-- Gönderi yeri tablosu için otomatik artış ayarları
 --
 ALTER TABLE `post_place`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- AUTO_INCREMENT for table `post_visibility`
+-- Gönderi görünürlük tablosu için otomatik artış ayarları
 --
 ALTER TABLE `post_visibility`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `users_session`
+-- Kullanıcı oturum tablosu için otomatik artış ayarları
 --
 ALTER TABLE `users_session`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `user_follow`
+-- Kullanıcı takip tablosu için otomatik artış ayarları
 --
 ALTER TABLE `user_follow`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `user_info`
+-- Kullanıcı bilgileri tablosu için otomatik artış ayarları
 --
 ALTER TABLE `user_info`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `user_metadata`
+-- Kullanıcının sistemdeki bilgileri tablosu için otomatik artış ayarları
 --
 ALTER TABLE `user_metadata`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `user_relation`
+-- Kullanıcı ilişkileri tablosu için otomatik artış ayarları
 --
 ALTER TABLE `user_relation`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
--- AUTO_INCREMENT for table `user_type`
+-- Kullanıcı türü tablosu için otomatik artış ayarları
 --
 ALTER TABLE `user_type`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- Constraints for dumped tables
+-- fOREİGN KEY TANIMLADIK
 --
 
 --
--- Constraints for table `message_recipient`
+-- Mesaj alıcısı tablosu için foreign key tanımladık
 --
 ALTER TABLE `message_recipient`
   ADD CONSTRAINT `message_recipient_ibfk_1` FOREIGN KEY (`message_id`) REFERENCES `message` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `post`
+-- Gönder tablosu için foreign key tanımladık`
 --
 ALTER TABLE `post`
   ADD CONSTRAINT `fk_post_place` FOREIGN KEY (`post_place`) REFERENCES `post_place` (`id`);
@@ -458,6 +465,8 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+/* Mantığı: Script çalışırken yapılan geçici ayar değişikliklerini, işlem tamamlandığında eski haline getirerek "temiz bir çıkış" yapmayı sağlar. */
 
 DELIMITER $$
 --
@@ -473,3 +482,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_get_discussions` (IN `user_id` I
 END$$
 
 DELIMITER ;
+
+/*Varsayılan olarak MySQL'de komutlar ; ile biter. Ancak, prosedür gibi çok satırlı bir yapıyı yazarken ;
+ sıkça kullanıldığı için, MySQL'in prosedür içindeki ; işaretlerini yanlış anlamaması için farklı bir delimiter ($$) belirlenir.*/
+
+/* Busp_get_discussions prosedüründe root kullanıcının user_id ile kullanıcının katıldığı mesajlaşmaları döndürür. */

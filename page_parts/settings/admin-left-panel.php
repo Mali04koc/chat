@@ -10,7 +10,7 @@
     }
 
     $logo_path = $root . "public/assets/images/logos/large.png";
-    $index_page_path = $root . "index.php";
+    $index_page_path = $root . "admin.php";
 
     $setting_profile_path = $root . "settings.php";
     $setting_account_path = $root . "settings-account.php";
@@ -21,7 +21,7 @@
 
     <!-- Logo Container (Ortalanmış) -->
     <div id="header-logo-container" style="margin-bottom: 15px;">
-        <a href="<?php echo Config::get("root/path");?>index.php" 
+        <a href="<?php echo Config::get("root/path");?>admin.php" 
            style="text-decoration: none;
                   color: white;
                   font-family: Arial, sans-serif;
@@ -37,6 +37,7 @@
     </div>
 
 </div>
+  
     <div id="left-panel-menu">
         <div class="button-with-suboption relative <?php if(isset($profile_selected)) echo $profile_selected; ?>">
             <div class="relative">

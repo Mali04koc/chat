@@ -26,7 +26,13 @@ class User implements \JsonSerializable {
 
         $isLoggedIn=false;
 
-    // Everytime we instantiate a user object we need to check if the session is already set to determine wethere we login or not
+   // user classımızda veri paylaşımında json formatını kullanacağımızı söyledik ve private değişkenlerimizi yazdık
+
+
+   // constructor fonksiyonumuz her yeni user nesnesi oluşturulduğunda çalışır
+   // db değişkenine DB classından getInstance fonksiyonu ile dönen değeri atadık
+   // confingden session name ve cookie name değişkenlerini aldık
+   // Eğer session name değişkeni varsa yani kullanıcı giriş yapmışsa true döndürüyoruz.dt değişkeni mesela 13,id sütununda böyle değer var mı diye bakar
     public function __construct() {
         $this->db = DB::getInstance();
         $this->sessionName = Config::get('session/session_name');
@@ -49,12 +55,13 @@ class User implements \JsonSerializable {
         $this->$propertyName = $propertyValue;
     }
 
+    // Metadata, kullanıcıya özgü anahtar-değer çiftleri (örneğin, "bio: Yazılım mühendisi") olabilir. 
     public function get_metadata($label="") {
         $metadata = array();
         $values = array($this->id);
         $query = "SELECT * FROM user_metadata WHERE `user_id` = ?";
 
-        // If the user qpecify label then we need to fetch the specific metadata with that label provided
+        
         if(!empty($label)) {
             $query .= " AND `label` = ?";
             $values[] = $label;
@@ -63,16 +70,40 @@ class User implements \JsonSerializable {
         $this->db->query($query, $values);
 
         return $this->db->results();
-    }
+
+        /*Öncelikle query ve results fonksiyonları DB classında tanımlı.Label anahtar demek eğer başka bir
+        şekilde aramak istiyorsak diye. 
+        1-metadata arrayi oluşturduk,values arrayi oluşturduk ve user_id değerini atadık
+
+        2-query değişkenine user_metadata tablosundan user_id değerini atdık buarada diğer kodlarda yaptığımız
+        gibi "SELECT * FROM user_metadata WHERE `user_id` = ? , array($this->id) şeklinde yapmadık çünkü
+        label boşsa sadece user_id değerini alacağız, eğer label doluysa o zaman label değerini de alacağız"
+
+        3-if ile label boş mu diye baktık,değilse query değişkenine label değerini de ekledik ve values arrayine
+        label değerini de ekledik
+
+        4-Son olarak db classındaki query fonksiyonunu çağırdık ve sonuçları döndürdük.
+
+        
+         */
+    
+        }
 
     public function get_metadata_items_number() {
         $this->db->query("SELECT COUNT(*) as number_of_labels FROM user_metadata WHERE `user_id` = ?", array($this->id));
 
-        // If there's a row found, then we return the count alias (number_of_labels)
+        
         if(count($this->db->results()) > 0) {
             return $this->db->results()[0]->number_of_labels;
         }
         return array();
+
+        /*
+        SQL sorgusu, user_metadata tablosunda belirtilen user_id için toplam metadata sayısını hesaplar.
+        Eğer sonuç döndüyse, ilk satırın number_of_labels(toplam metadata) alanını döndürür.
+        Aksi halde array() döndürür.
+        */
+
     }
 
     public function metadata_exists($label) {
@@ -81,11 +112,13 @@ class User implements \JsonSerializable {
             $this->id
         ));
 
-        // If there's a row found, then we return true
+        
         if($this->db->results()[0]->number_of_labels != 0) {
             return true;
         }
         return false;
+
+        // number_of_labels boş değilse demek ki metadata exist
     }
 
     public function add_metadata($label, $content) {
@@ -100,6 +133,7 @@ class User implements \JsonSerializable {
         }
 
         return false;
+        // eğer kullanıcının metadata sayısı 6'dan azsa ve content boş değilse value ekle
     }
 
     public function update_metadata($label, $content) {
@@ -110,8 +144,10 @@ class User implements \JsonSerializable {
         ));
 
         return $this->db->error() == false ? true : false;
-    }
 
+        // hata oluştu false ise yani hata oluşmadıysa 
+    }
+    // eğer metadata varsa update et yoksa add et
     public function set_metadata($metadata) {
         foreach($metadata as $mdata) {
             if($this->metadata_exists($mdata["label"])) {
@@ -122,6 +158,9 @@ class User implements \JsonSerializable {
         }
     }
 
+
+    // field isimli sütun adımız ve value isimli aramak istediğimiz değer var.
+    //Eğer bu değer user_info tablosunda varsa true döner
     public static function user_exists($field, $value) {
         DB::getInstance()->query("SELECT * FROM user_info WHERE $field = ?", array($value));
 
@@ -135,7 +174,8 @@ class User implements \JsonSerializable {
     public function fetchUser($field_name, $field_value) {
         $this->db->query("SELECT * FROM user_info WHERE $field_name = ?", array($field_value));
 
-        // Here we need to check first if we get a user with the given id before starting assigning values to its properties
+        // Eğer kullanıcı varsa aramada bir şey çıkmalı (>0) o zaman result dizisinin ilk değerini
+        //fetcheduser a atar.Muhtemelem o değer id dir.Sonra fetcheduserın tüm bilgilerini çeker
         if($this->db->count() > 0) {
             $fetchedUser = $this->db->results()[0];
 
@@ -177,8 +217,11 @@ class User implements \JsonSerializable {
     }
 
     /* 
-    Note that if you want to add new user by specifying id, you can actually fetch the last user and add 1 to its id,
-    then class add function by adding id to add query
+
+   $data arrayi ile user_info tablosunu güncelliyoruz.
+   isset($data["joined"]) ? $data["joined"] : date("Y/m/d h:i:s");
+   Eğer joined yani siteye katılma değeri verilmemişse o zaman date fonksiyonu ile
+   güncel tarihi atıyoruz.
     */
     public function add() {
         $this->db->query("INSERT INTO user_info 
@@ -194,15 +237,11 @@ class User implements \JsonSerializable {
             $this->user_type
         ));
 
-        // This will return true if the query error function in DB generate an error
-        // Hint: note that we need to retrun true if there's no errors, returning true in add function means everything goes well
+        // Eğer hata yoksa true döner(Kontrol mekanizması)
         return $this->db->error() == false ? true : false;
     }
 
-    /*
-    After getting the user by id and editing its properties, all you need to do to edit it is to call this function
-    and it will do all the work for you
-    */
+    // Burada update fonksiyonu ile user_info tablosunu güncelliyoruz
     public function update() {
         $this->db->query("UPDATE user_info SET username=?, email=?, password=?, salt=?, firstname=?, lastname=?, joined=?, user_type=?, bio=?, cover=?, picture=?, private=? WHERE id=?",
         array(
@@ -224,6 +263,7 @@ class User implements \JsonSerializable {
         return ($this->db->error()) ? false : true;
     }
 
+    // Sadece belli bir özelliği güncellemek için kullanılır
     public function update_property($property, $new_value) {
         $this->db->query("UPDATE user_info SET $property=? WHERE id=?",
         array(
@@ -234,30 +274,37 @@ class User implements \JsonSerializable {
         return ($this->db->error()) ? false : true;
     }
 
+    // Burada user_info tablosundaki kullanıcının id'sine göre silme işlemi yapıyoruz
     public function delete() {
         $this->db->query("DELETE FROM user_info WHERE id = ?", array($this->id));
 
         return ($this->db->error()) ? false : true;
     }
-
+    
+    // Arama mantığı-- Eğer arama kutusuna bir şey yazılmadıysa boş array döner
     public static function search($keyword) {
         if(empty($keyword)) {
             return array();
         }
 
-        $keywords = strtolower($keyword);
+        $keywords = mb_strtolower($keyword, 'UTF-8');
         $keywords = htmlspecialchars($keywords);
         $keywords = trim($keywords);
 
         /*
-        keyword could be multiple keywords separated by spaces.
-        keep in mind that if the keyword is empty, explode will return an array with one empty element
-        meaning you need to handle the situation where the first element is empty
+        strtolower fonksiyonu ile arama kutusuna yazılan kelimeleri küçük harfe çeviriyoruz.mb_strtolower
+        fonksiyonu ise Türkçe karakterleri de küçük harfe çeviriyor.
+
+        htmlspecialchars fonksiyonu ile HTML özel karakterleri (<, >, ", ', &) güvenli hale getirir.
+
+        trim fonksiyonu ile başındaki ve sonundaki boşlukları temizliyoruz.
+
         */
+
         $keywords = explode(' ', $keyword);
 
         if($keywords[0] == '') {
-            // Handle situation where $keyword passed is empty
+            
             $query = "";
         } else {
             $query = "SELECT * FROM user_info ";
@@ -270,21 +317,28 @@ class User implements \JsonSerializable {
             }
         }
 
-        /*
-        We set WHERE false because if the $keywords is empty we don't appear anything and we display a message to the user
-        informing him to fill in the search box to find friends or posts ..
-        */
-
+       
         DB::getInstance()->query($query);
         return DB::getInstance()->results();
     }
+
+    /* keywordu düzenledikten sonra boşluklara göre ayırdık 
+    mesela ali koç u hem ali hemde koç olarak alır 2 eleman oldu
+
+    keywordsun ilk elemanı boşsa demek ki arama kutusuna bir şey yazılmadı,o zaman boş sorgu yapar
+
+    Ondan sonra normal sorgu yapıyor ali için daha sonra koç için yapıyor 
+*/
+
+
+// Aşağıdaki fonksiyon username'e göre arama yapıyor
 
     public static function search_by_username($username) {
         if(empty($username)) {
             return array();
         }
 
-        $keyword = strtolower($username);
+        $keyword = mb_strtolower($username, 'UTF-8');
         $keyword = htmlspecialchars($username);
         $keyword = trim($username);
 
@@ -293,49 +347,48 @@ class User implements \JsonSerializable {
         return DB::getInstance()->results();
     }
 
-    /*
-    This function basically accepts two arguments, first the username and then the password in plaintext. First we check if
-    the username exists in database, if so we need we fetch this user and compare the password of that user with the plain text passes by adding salt
-    to the password and hash it and compare it with password in database
-
-    login first check if this user actually exists by verifying it's id; if id is set then this user is exists, in this case we don't have to fetch its data
-    we simply make a session by this id and set isLoggedIn to true and return true;
-    */
+    
     public function login($email_or_username='', $password='', $remember=false) {
+        // 3 parametreli login fonksiyonu,remember default false
+        //Eğer $this->id tanımlanmışsa (yani kullanıcı nesnesi zaten giriş yapmışsa),
+        // bu kullanıcıyı doğrudan oturumda aktif hale getirir. 
         if($this->id) {
             Session::put($this->sessionName, $this->id);
-            $this->isLoggedIn = true;
             return true;
-        } else {
+        }
+        // yoksa önce username e göre arar ama strpos ile email_or_username değişkeninde @ bulursa
+        // arama değişkenini emaile döndürür 
+        else {
             $fetchBy = "username";
             if(strpos($email_or_username, "@")) {
                 $fetchBy = "email";
             }
+            
+            /* zaten arama yapılcak kategori mesela email ve $email_or_usernameden gelen değer mesela
+            mk12334@gmail.com belli.Şimdi fetchUser la o kullanıcıyı çektik
 
+            Sonra onun şifresiyle hashı kıyasladık doğru mu diye,doğruysa sessionı başlattık.isLoggedIn True oldu
+            */
             if($this->fetchUser($fetchBy, $email_or_username)) {
                 if($this->password === Hash::make($password, $this->salt)) {
                     Session::put($this->sessionName, $this->id);
+                    $this->isLoggedIn = true; 
                     
-                    /* 
-                    This will only executed if user's credentials are good and he checks remember me: We generate a hash, 
-                    check if the hash is not  already exists in user_session table and insert that hash into the database;
-                    What happens is the user store a cookie with id and a hash and also the app store these infos in database
-                    Next time the user visit the app we need to check if he has a cookie that identifies it, if so we compare the hash of it with hash in db
-                    */
+                    // eğer kullanıcı beni hatırla butonuna bastıysa,ilk kullanıcı idsiyle user_session tablosunda aranır
                     if($remember) {
                         $this->db->query("SELECT * FROM users_session WHERE user_id = ?",
                             array($this->id));
                         
-                        // If this user is not exists in users_sesion table
+                        // eğer böyle bir kullanıcı yoksa o zaman yeni bir unique hash oluşturup user_sessions tablosuna insert edersin
                         if(!$this->db->count()) {
                             $hash = Hash::unique();
                             $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
                                 array($this->id, $hash));
                         } else {
-                            // If the user does exist we 
+                            // Eğer varsa böyle biri o zaman kayıtlı hashi alırsın,demek ki daha önceden girmiş ama beni hatırla butonuna basmamış 
                             $hash = $this->db->results()[0]->hash;
                         }
-    
+                         // en sonda tüm bilgilerle cookie oluşturursun
                         Cookie::put($this->cookieName, $hash, Config::get("remember/cookie_expiry"));
                     }
                     return true;
@@ -346,7 +399,7 @@ class User implements \JsonSerializable {
         return false;
     }
 
-    // When we logout, we actually have to delete the session and cookie hash, and also delete session from database;
+    // Logout yaptığımızda bizim session,cookie hash ve databaseden sessionı silmemiz gerekir
     public function logout() {
 
         $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
@@ -355,7 +408,8 @@ class User implements \JsonSerializable {
         Session::delete(Config::get("session/tokens/logout"));
         Cookie::delete($this->cookieName);
     }
-
+    
+    // en son ne zaman aktifti
     public function update_active() {
         $this->db->query("UPDATE user_info SET last_active_update=? WHERE id=?",
         array(
@@ -370,9 +424,9 @@ class User implements \JsonSerializable {
         return $this->isLoggedIn;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize():mixed
     {
-        //$vars = get_object_vars($this);
+        // JSON formatında döndürmek istediğimiz verileri burada tanımlıyoruz
         $vars = array(
             "id"=>$this->id,
             "username"=>$this->username

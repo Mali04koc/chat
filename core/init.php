@@ -2,8 +2,9 @@
 
 use classes\{Cookie, DB, Config, Session};
 use models\User;
+//kullanacağımız sınıfları ve modelleri include ediyoruz
 
-// Check if session is not started, then start it
+// kullanıcı bilgilerini tutmak için session başlamadıysa başlatıyoruz
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -34,29 +35,26 @@ $GLOBALS["config"] = array(
     "root"=> array(
         'path'=>'http://127.0.0.1/CHAT/',
         'project_name'=>"CHAT"
-    )
+    ),
+    'mailgun' => [
+        'api_key' => 'dbe9d26c33233ca8c080f12f4dd9f76f-e71583bb-20998d10',
+        'domain' => 'sandbox6182845ee4934bc7a5a6bd859a5e4b4a.mailgun.org',
+        'sender' => 'NEW WORLD <postmaster@sandbox6182845ee4934bc7a5a6bd859a5e4b4a.mailgun.org>'
+    ]
 );
 
 /*
+ Yukarıda genel config ismini verdiğimiz ayarları tüm global değişkenler üzerinde yaptık.
 
-Here we create a user object with no data associated to it, and in the user constructor, we check if there's already a session
-if so we get the data from session which is the user id, and we fetch data from database of that id and we see if that id really
-exists in database, if it is, WE ASSIGN TRUE TO isLoggedIn 
-
-Then we check if there's a cookie set in user machine and there's no session (This case is like we switch user's computer and later tries to logged in)
-in this case we fetch the hash of user's machine and see if this hash exists in users_session table in database, if hash matches we fetch user_id associated with it 
-and use it to fetch user with that id. if the count of fetching is 1 then we give username, password and true($remember=true) to login function
-
-go to login function's comment
-
-*/
-
-/*
-    Notice that getting the root path is a common case for almost every page, so it's a good idea to put it in $root
-    variable and only use root variable to reference it because init file also included in every page deal with config
+ 1-Database ayarları yapıldı
+ 2-Beni Hatırla cookie ayarları yapıldı.Cookie name değişkenlerine hash dedik ve 604800 saniye yani 7 gün süre verdik
+ 3-Session ayarları yapıldı. Session name değişkenine user dedik ve token name değişkenine token dedik.
+ 4-Root ayarları yapıldı. Projenin pathi belli oldu
 */
 $root = Config::get("root/path");
 $proj_name = Config::get("root/project_name");
+
+// Confing classındaki statik get fonksiyonu ile path ve project_name değişkenlerini aldık
 
 $user = new User();
 
@@ -65,21 +63,43 @@ if(Cookie::exists(Config::get("remember/cookie_name")) && !Session::exists(Confi
     $res = DB::getInstance()->query("SELECT * FROM users_session WHERE hash = ?", array($hash));
 
     if($res->count()) {
+
+           
         $user->fetchUser("id", $res->results()[0]->user_id);
         $user->login($user->getPropertyValue("username"),$user->getPropertyValue("password"),true);
-    }
+         
+
+        }
 }
 
 if($user->getPropertyValue("isLoggedIn")) {
     $user->update_active();
 }
 
-/* 
-IMPORTANT : 
-1 - sanitize function file could not be included here because the path will be relative to the caller script
-so if for example include it like following: include_once "functions/sanitize.php" only scripts in the root 
-directory can use it, otherwise a fatal error will be thrown
-So you should include it along with autoload and init file in every page needs it
 
-2 - Composer autoload file also follow the same rule you can't import it here
+
+/*
+
+!!!BENİ HATIRLANIN OLAYI NORMALDE LOGİN YAPMADAN urlye bunu yazıp http://127.0.0.1/CHAT/index.php
+giriş yapamayız ama beni hatırla butonuna bastığımızda cookie oluşturuluyor ve bu cookie bizim girişimizi
+tutuyor bu sayede http://127.0.0.1/CHAT/ ile direkt giriş yapabiliyoruz.
+
+
+*/ 
+/*
+
+BENİ HATIRLA ÖZELLİĞİ AŞAĞI GİBİ ÇALIŞIYOR:
+
+1-Önce tabbi user modelimizden bir user nesnesi oluşturuyoruz
+2-Cookie::exists fonksiyonu ile cookie var mı diye kontrol ediyoruz
+3-Cookie var ise session var mı diye kontrol ediyoruz.Cookiemiz var ve session yoksa o zaman if
+içine giriyoruz,session zaten olmamalı eğer kullanıcı oturumu açtıysa neden beni hatırla özelliğine 
+gerek var ki
+4-Cookie::get fonksiyonu ile cookie değerini alıyoruz ve hash değişkenine atıyoruz
+5-DB::getInstance()->query fonksiyonu ile users_session tablosundan hash değeri ile sorgulama yapıyoruz
+Böyle bir kullanıcı var mı diye kontrol ediyoruz
+6-Eğer böyle bir kullanıcı varsa o zaman user nesnesinin fetchUser fonksiyonu ile id ve user_id değerini alıyoruz
+7-User nesnesinin login fonksiyonu ile kullanıcıyı giriş yaptırıyoruz
+8-isLoggedIn true ise giriş yapmış demektir o zaman update_active fonksiyonu ile kullanıcının aktiflik durumunu güncelliyoruz
+
 */

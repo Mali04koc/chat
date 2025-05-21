@@ -21,7 +21,7 @@
 
 <div id="master-left">
     <div class="flex-space">
-        <h3 class="title-style-2">Home</h3>
+        <h3 class="title-style-2">ANASAYFA</h3>
         <div class="flex">
             <a href="<?php echo Config::get("root/path") . "settings.php"; ?>" class="menu-button-style-3 settings-back" id="go-to-settings"></a>
             <a href="<?php echo Config::get("root/path") . "chat.php"; ?>" class="menu-button-style-3 messages-button"></a>
@@ -37,38 +37,22 @@
                 <p class="label-style-3"><?php echo $user->getPropertyValue("username"); ?></p>
             </a>
             <div id="master-left-container">
-                <p class="regular-text green-text" style="margin: 6px 0 4px 6px">Menu</p>
+                <p class="regular-text green-text" style="margin: 6px 0 4px 6px">Menü</p>
                 <a href="<?php echo Config::get("root/path") . "index.php" ?>" class="no-underline menu-item-style-2 row-v-flex">
                     <div class="image-style-2 flex-row-column">
                         <img src="public/assets/images/icons/home-w.png" class="image-style-5" alt="">
                     </div>
-                    <p class="label-style-3">Home</p>
+                    <p class="label-style-3">Anasayfa</p>
                 </a>
-                <a href="<?php echo Config::get("root/path") . "notifications.php" ?>" class="no-underline menu-item-style-2 row-v-flex">
-                    <div class="image-style-2 flex-row-column">
-                        <img src="public/assets/images/icons/notification.png" class="image-style-5" alt="">
-                    </div>
-                    <p class="label-style-3">Notifications</p>
-                </a>
+               
                 <a href="<?php echo Config::get("root/path") . "chat.php" ?>" class="no-underline menu-item-style-2 row-v-flex">
                     <div class="image-style-2 flex-row-column">
                         <img src="public/assets/images/icons/messages.png" class="image-style-5" alt="">
                     </div>
-                    <p class="label-style-3">Messages</p>
+                    <p class="label-style-3">Mesajlar</p>
                 </a>
-                <a href="<?php echo Config::get("root/path") . "notifications.php" ?>" class="no-underline menu-item-style-2 row-v-flex">
-                    <div class="image-style-2 flex-row-column">
-                        <img src="public/assets/images/icons/page.png" class="image-style-5" alt="">
-                    </div>
-                    <p class="label-style-3">Pages</p>
-                </a>
-                <a href="<?php echo Config::get("root/path") . "notifications.php" ?>" class="no-underline menu-item-style-2 row-v-flex">
-                    <div class="image-style-2 flex-row-column">
-                        <img src="public/assets/images/icons/group-w.png" class="image-style-5" alt="">
-                    </div>
-                    <p class="label-style-3">Groups</p>
-                </a>
-                <p class="regular-text green-text" style="margin: 6px 0 8px 6px">Profile</p>
+                
+                <p class="regular-text green-text" style="margin: 6px 0 8px 6px">Profil</p>
                 <div id="menu-profile-container" class="relative">
                     <div class="absolute header-profile-edit-container">
                         <a href="" class="button-style-4 header-profile-edit-button">Edit</a>
@@ -87,25 +71,25 @@
                         <a href="" class="user-info-section-link">
                             <div>
                                 <h2 class="title-style-4"><?php echo $posts_number; ?></h2>
-                                <p class="regular-text-style-2">Posts</p>
+                                <p class="regular-text-style-2">Gönderiler</p>
                             </div>
                         </a>
                         <a href="" class="user-info-section-link">
                             <div>
                                 <h2 class="title-style-4"><?php echo $followers_number; ?></h2>
-                                <p class="regular-text-style-2">Followers</p>
+                                <p class="regular-text-style-2">Takipçi</p>
                             </div>
                         </a>
                         <a href="" class="user-info-section-link">
                             <div>
                                 <h2 class="title-style-4"><?php echo $followed_number; ?></h2>
-                                <p class="regular-text-style-2">Following</p>
+                                <p class="regular-text-style-2">Takip Edilen</p>
                             </div>
                         </a>
                         <a href="" class="user-info-section-link">
                             <div>
                                 <h2 class="title-style-4"><?php echo $friends_number; ?></h2>
-                                <p class="regular-text-style-2">Friends</p>
+                                <p class="regular-text-style-2">Arkadaşlar</p>
                             </div>
                         </a>
                     </div>

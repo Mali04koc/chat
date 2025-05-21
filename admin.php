@@ -20,16 +20,6 @@
         $welcomeMessage = Session::flash("new_username") . ", " . Session::flash("register_success");
     }
 
-
-    $current_user_id = $user->getPropertyValue("id");
-    $journal_posts = Post::fetch_journal_posts($current_user_id);
-    // Let's randomly sort array for now
-    shuffle($journal_posts);
-    /*usort($journal_posts, 'post_date_latest_sort');
-
-    function post_date_latest_sort($post1, $post2) {
-        return $post1->get_property('post_date') == $post2->get_property('post_date') ? 0 : ($post1->get_property('post_date') > $post2->get_property('post_date')) ? -1 : 1;
-    }*/
 ?>
 
 <!DOCTYPE html>
@@ -37,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEW WORLD</title>
+    <title>NEW WORLD-ADMİN PANEL</title>
     <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.png' />
     <link rel="stylesheet" href="public/css/global.css">
     <link rel="stylesheet" href="public/css/header.css">
@@ -55,8 +45,9 @@
     <script src="public/javascript/post.js" defer></script>
 </head>
 <body>
-    <?php include_once "page_parts/basic/header.php"; ?>
+    <?php include_once "page_parts/basic/admin-header.php"; ?>
     <main>
+
         <div id="global-container" class="relative">
             <div class="post-viewer-only">
                 <div class="viewer-post-wrapper">
@@ -64,7 +55,7 @@
                     <div class="close-view-post"></div>
                 </div>
             </div>
-            <?php include_once "page_parts/basic/master-left.php"; ?>
+            <?php include_once "page_parts/basic/admin-master-left.php"; ?>
             <div id="master-middle">
                 <div class="green-message">
                     <p class="green-message-text"><?php echo $welcomeMessage; ?></p>
@@ -79,25 +70,9 @@
                     <div class="delete-message-hint">
                     </div>
                 </div>
-                <?php include_once "page_parts/basic/post_creator.php"; ?>
-                <div id="posts-container">
-                    <?php if(count($journal_posts) == 0) { ?>
-                        <div id="empty-posts-message">
-                            <h2>Arkadaş ekle ve onların yeni dünyalarını gör</h1>
-                            <p>Buraya <a href="http://127.0.0.1/CHAT/search.php" class="link" style="color: rgb(66, 219, 66)">tıkla</a> ve arama sayfasına git</p>
-                        </div>
-                    <?php } else { 
-                        foreach($journal_posts as $post) {
-                            $post_view = new Post_View();
-
-                            echo $post_view->generate_post($post, $user);
-                        }
-                    }
-                    ?>
-
-                </div>
+              
+                
             </div>
-            <?php include_once "page_parts/basic/master-right.php" ?>
         </div>
     </main>
 </body>

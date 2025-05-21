@@ -39,29 +39,26 @@
 
             if($validate->passed()) {
                 if(Common::getInput($_POST, "email") != $user->getPropertyValue("email")) {
-                    $validate->addError("It seems that you change the email section which is not allowed !");
+                    $validate->addError("Email adresinizi yanlış girdiniz.");
                 } else {
-                    // Now we need to generate a salt hash, and then make a hashed password using that salt
+                    // yeni bir hash oluşturuyoruz
                     $newSalt = Hash::salt(16);
                     $newPassword = Hash::make(Common::getInput($_POST, "password"), $newSalt);
 
                     /*
-                    Here we can check if that hashed password already exists in database, and if so we generate other hash
-                    but in sake of simplicity we just update the password and salt anyway !
+                    şifre ve hashi updateliyoruz
                     */
                     $user->setPropertyValue("password", $newPassword);
                     $user->setPropertyValue("salt", $newSalt);
                     
                     $user->update();
 
-                    // At the bottom in html code add a div where you check if this flash is exists, if so print its content
-                    Session::flash("Password_changed", "Your password has been changed successfully.");
+                    Session::flash("Password_changed", "Şifreniz başarıyla değiştirildi.");
+                     
                 }
             }
 
-            foreach($validate->errors() as $error) {
-                echo $error . "<br>";
-            }
+            
         }
     }
 
@@ -71,46 +68,73 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password recovery</title>
-    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.ico' />
-    <link rel="stylesheet" href="../public/css/global.css">
-    <link rel="stylesheet" href="../public/css/log-header.css">
-    <style>
-        #reset-section {
-            padding: 20px;
-            width: 340px;
-        }
-    </style>
+    <title>ŞİFRE YENİLEME</title>
+    <link rel="stylesheet" href="../public/css/giris.css">
+    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.png' />
 </head>
 <body>
-    <?php include "../page_parts/basic/log-header.php" ?>
-    <main>
-        <div id="reset-section">
-            <div class="green-message">
-                <p class="green-message-text"><?php $changed = Session::flash("Password_changed"); echo $changed;?></p>
+    
+    <section>
+        <div class="login-box">
+            <div id="reset-section">
+            
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post" autocomplete="off" class="flex-form" id="login-form">
+                <h2>ŞİFRE YENİLE</h2>
+
+                <?php if ($validate->errors()): ?>
+                    <div class="error-message">
+                        <?php echo implode('<br>', $validate->errors()); ?>
+                    </div>
+                <?php endif; ?>
+
+                 
+        <?php if (Session::exists("Password_changed")): ?>
+        <div class="success-container">
+            <div class="success-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
             </div>
-            <h2 class="title-style1">New Password</h2>
-            <p>Choose a new password</p>
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="flex-column">
-                <div class="classic-form-input-wrapper">
-                    <label for="email" class="classic-label">Your Email</label>
-                    <input type="text" name="email" value="<?php echo htmlspecialchars($user->getPropertyValue("email")); ?>" placeholder="Email address" autocomplete="off" class="classic-input">
+            <div class="success-message">
+                <?php echo Session::flash("Password_changed"); ?>
+            </div>
+        </div>
+        <?php endif; ?>
+                
+              
+
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="text" name="email"  value="<?php echo htmlspecialchars($user->getPropertyValue("email")); ?>" autocomplete="off" placeholder="Kullanıcı Adı Veya Email" required>
+                    <label>Email Giriniz</label>
                 </div>
-                <div class="classic-form-input-wrapper">
-                    <label for="password" class="classic-label">New Password</label>
-                    <input type="password" name="password" autofocus placeholder="Password" tabindex="1" autocomplete="off" class="classic-input">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" name="password"  autocomplete="off" placeholder="Yeni Şifre" required>
+                    <label>Yeni Şifre Giriniz</label>
                 </div>
-                <div class="classic-form-input-wrapper">
-                    <label for="password_again" class="classic-label">Re-enter the new password</label>
-                    <input type="password" name="password_again" placeholder="Re-enter password" tabindex="2" autocomplete="off" class="classic-input">
-                </div>
-                <div class="classic-form-input-wrapper">
-                    <input type="hidden" name="token_password_save" value="<?php echo Token::generate("reset-pasword"); ?>">
-                    <input type="submit" value="Save" name="save" tabindex="3" class="button-style-1" style="width: 70px;">
-                </div>
+                
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+                    <input type="password" name="password_again"  autocomplete="off" placeholder="Yeni Şifre Tekrar" required>
+                    <label >Yeni Şifreyi Tekrar Giriniz</label>
+                </div>              
+
+                <input type="hidden" name="token_password_save" value="<?php echo Token::generate("reset-pasword"); ?>">                
+                <button type="submit" name="save" value="Save">Kaydet</button>
+                <a href="../Login/login.php" class="icon">
+                <ion-icon name="home-outline"></ion-icon>
+            </a>>
+                            
             </form>
         </div>
-    </main>
+    </section>
+    
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    
 </body>
 </html>

@@ -15,6 +15,7 @@ class Redirect {
                 }
             }
             header("Location: " . $location);
+            exit;
         }
     }
 }

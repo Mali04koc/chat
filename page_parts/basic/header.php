@@ -19,7 +19,7 @@
 
     if(count($fr_senders) == 0) {
         $friend_request_components = <<<EMPTY_FR
-            <p style="padding: 10px" class="regular-text">You don't have any friendship requests.</p>
+            <p style="padding: 10px" class="regular-text">Arkadaş isteğin yok</p>
 EMPTY_FR;
     } else {
         $rnc = count($fr_senders);
@@ -156,31 +156,23 @@ MSG;
 
     $setting_path = Config::get("root/path") . "settings.php";
 ?>
+
+
 <header>
     <div id="top-header">
         <div id="header-logo-container">
             <!-- height of <a> should be like img height -->
-            <a href="<?php echo Config::get("root/path");?>index.php" style="height: 28px"><img src="<?php echo Config::get("root/path");?>public/assets/images/logos/large.png" alt="Logo" id="header-logo"></a>
+            <a href="<?php echo Config::get("root/path");?>index.php" style="text-decoration: none; color: white; font-family: Arial, sans-serif; font-weight: bold; font-size: 24px; letter-spacing: 1px; text-transform: uppercase;" class="logo">NEW WORLD</a>
         </div>
         <div class="inline-logo-separator">〡</div>
         <div class="row-v-flex">
             <form action="<?php echo Config::get("root/path") . htmlspecialchars('search.php'); ?>" method="GET" id="header-search-form">
-                <input type="text" name="q" value="<?php echo isset($_GET["q"]) ? trim(htmlspecialchars($_GET["q"])) : '' ?>" class="input-text-style-1 search-back black-search-back" placeholder="Search for friends, posts, events ..">
-                <input type="submit" value="search" class="search-button-style-1">
+                <input type="text" name="q" value="<?php echo isset($_GET["q"]) ? trim(htmlspecialchars($_GET["q"])) : '' ?>" class="input-text-style-1 search-back black-search-back" placeholder="Arkadaş,gönderi ara">
+                <input type="submit" value="Ara" class="search-button-style-1">
             </form>
         </div>
         <div id="global-header-strip-container">
-            <div class="row-v-flex header-menu">
-                <div class="horizontal-menu-item-wrapper">
-                    <a href="<?php echo Config::get("root/path");?>index.php" class="horizontal-menu-link menu-button-style-1" id="home-button">Home</a>
-                </div>
-                <div class="horizontal-menu-item-wrapper">
-                    <a href="<?php echo $root . "search.php" ?>" class="horizontal-menu-link menu-button-style-1" id="explore-button">Explore</a>
-                </div>
-                <div class="horizontal-menu-item-wrapper">
-                    <a href="" class="horizontal-menu-link menu-button-style-1 live-button">Live</a>
-                </div>
-            </div>
+           
             <div class="menu-items-separator">〡</div>
             <div class="row-v-flex header-menu">
 
@@ -202,7 +194,7 @@ MSG;
                         <!-- "Notifications" will appear when user hover over the abov link button -->
                     </div>
                     <div class="sub-options-container sub-options-container-style-1">
-                        <h2 class="title-style-1">Friend Requests</h2>
+                        <h2 class="title-style-1">Arkadaş İstekleri</h2>
                         <!-- When this link get pressed you need to redirect the user to the notification post -->
                         <div class="options-container">
                             <?php echo $friend_request_components ?>
@@ -212,7 +204,7 @@ MSG;
                 <div class="horizontal-menu-item-wrapper">
                     <a href="" class="menu-button-style-2 button-with-suboption messages-button"></a>
                     <div class="sub-options-container sub-options-container-style-1">
-                        <h2 class="title-style-1">Messages</h2>
+                        <h2 class="title-style-1">Mesajlar</h2>
                         <!-- When this link get pressed you need to redirect the user to the notification post -->
                         <div class="options-container">
 
@@ -236,7 +228,7 @@ MSG;
                                     </div>
                                     <div class="message-content-container">
                                         <p class="account-user"><?php echo $user->getPropertyValue("username"); ?></p>
-                                        <p class="message-content">See your profile</p>
+                                        <p class="message-content">Profilini gör</p>
                                     </div>
                                 </div>
                             </a>
@@ -247,27 +239,18 @@ MSG;
                                         <img src="<?php echo Config::get("root/path") . "public/assets/images/icons/settings.png" ?>" class="image-style-2" alt="user's profile picture">
                                     </div>
                                     <div class="message-content-container">
-                                        <p style="margin: 4px">Settings</p>
+                                        <p style="margin: 4px">Ayarlar</p>
                                     </div>
                                 </div>
                             </a>
-                            <a href="" class="sub-option">
-                                <div class="row-v-flex">
-                                    <div>
-                                        <img src="<?php echo Config::get("root/path") . "public/assets/images/icons/log.png" ?>" class="image-style-2" alt="user activity log">
-                                    </div>
-                                    <div class="message-content-container">
-                                        <p style="margin: 4px">Activity Log</p>
-                                    </div>
-                                </div>
-                            </a>
+                           
                             <button name="logout" type="submit" form="logout-form" class="sub-option logout-button">
                                 <div class="row-v-flex">
                                     <div>
                                         <img src="<?php echo Config::get("root/path") . "public/assets/images/icons/logout.png" ?>" class="image-style-2" alt="user's profile picture">
                                     </div>
                                     <div class="message-content-container">
-                                        <p style="margin: 4px">Logout</p>
+                                        <p style="margin: 4px">Çıkış</p>
                                     </div>
                                 </div>
                             </button>

@@ -170,7 +170,7 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
     <script src="public/javascript/post.js" defer></script>
 </head>
 <body>
-    <?php include_once "page_parts/basic/header.php"; ?>
+    <?php include_once "page_parts/basic/admin-header.php"; ?>
     <main class="relative">
         <div class="post-viewer-only">
             <div class="viewer-post-wrapper">

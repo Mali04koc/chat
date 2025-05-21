@@ -7,7 +7,10 @@
     use models\User;
     use Mailgun\Mailgun;
 
+    // User sınıfı init.php'de zaten oluşturulmuş
     $validate = new Validation();
+
+
 
     if(isset($_POST["send"])) {
         if(Token::check(Common::getInput($_POST, "token_conf_send"), "reset-pasword")) {
@@ -22,43 +25,51 @@
             ));
 
             if($validate->passed()) {
-                $exists = $user->fetchUser("email", Common::getInput($_POST, "email"));
+                $email = Common::getInput($_POST, "email");
+                $exists = $user->fetchUser("email", $email);
+                
                 if($exists) {
                     $conf_code = substr(Hash::unique(), 16, 16);
-                    // Code to send conf code
-                    $mg = new Mailgun("YOUR_KEY");
-                    $domain = "YOUR_DOMAIN";
-                    # Make the call to the client.
+                    
+                    // API anahtarını ve domain'i güvenli bir şekilde saklayın
+                    // Bu değerleri bir config dosyasında tutmanız daha güvenli olacaktır
+                    $mailgun_api_key =  Config::get('mailgun/api_key');
+                    $mailgun_domain = Config::get('mailgun/domain');
+                    
                     try {
-                        $result = $mg->sendMessage($domain, array(
-                            'from'	=> '<SENDER_EMAIL>',
-                            'to'	=> '<' . $user->getPropertyValue("email") . '>',
-                            'subject' => "Confirmation code",
-                            'text'	=> $conf_code
-                        ));
+                        // Güncel Mailgun SDK kullanımı
+                        $mgClient = Mailgun::create($mailgun_api_key);
+                        
+                        $result = $mgClient->messages()->send($mailgun_domain, [
+                            'from'    => Config::get('mailgun/sender'),
+                            'to'      => $user->getPropertyValue("email"),
+                            'subject' => "Şifre Sıfırlama - Doğrulama Kodu",
+                            'text'    => "Şifre sıfırlama işleminiz için doğrulama kodunuz: " . $conf_code
+                        ]);
 
-                        /* We'll use email-confirmation sesion variable in the next page to see if the user pass from this process,
-                        If the user try directly to go to the next page, he'll not be able to access it because email-confirmation
-                        session variable will not be set here and we redirect him to login page*/
+                        // Doğrulama kodu ve kullanıcı ID'sini session'a kaydet
                         Session::put("email-confirmation", $conf_code);
-
-                        // We'll need this variable to fetch the user data in th next pages of password recovery
                         Session::put("u_id", $user->getPropertyValue("id"));
-                        $user->fetchUser("email", Common::getInput($_POST, "email"));
+                        
+                        // Başarılı gönderimden sonra confirmation sayfasına yönlendir
                         Redirect::to("confirmationcode.php");
-                    } catch(Exception $e) {
-                        $validate->addError("There's a problem while sending the confirmation code.");
-                        $validate->addError("If send message throws an error about ssl certificat, read [IMPORTANT#5] in Z_IMPORTANT.txt file in root directory to resolve this problem!");
+                        
+                    } catch(\Exception $e) {
+                        // Hata detaylarını logla
+                        error_log("Mailgun Hatası: " . $e->getMessage());
+                        
+                        // Kullanıcıya daha anlaşılır bir hata mesajı göster
+                        $validate->addError("Doğrulama kodu gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin.");
+                        
+                        // SSL hatası varsa özel bir mesaj göster
+                        if(strpos($e->getMessage(), 'SSL') !== false) {
+                            $validate->addError("SSL sertifika hatası oluştu. Z_IMPORTANT.txt dosyasındaki [IMPORTANT#5] bölümünü inceleyiniz.");
+                        }
                     }
                     
                 } else {
-                    // Print error message
-                    echo "There's no user with this email address !";
-                }
-            } else {
-                // Here instead of printing out errors we can put them in an array and use them in proper html labels
-                foreach($validate->errors() as $error) {
-                    echo $error . "<br>";
+                    // Kullanıcı bulunamadı hatası
+                    $validate->addError("Bu e-posta adresine sahip bir kullanıcı bulunamadı!");
                 }
             }
         }
@@ -70,35 +81,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password recovery</title>
-    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.ico' />
-    <link rel="stylesheet" href="../public/css/global.css">
-    <link rel="stylesheet" href="../public/css/log-header.css">
-    <style>
-        #reset-section {
-            padding: 20px;
-            width: 340px;
-        }
-    </style>
+    <title>NEW WORLD-ŞİFREMİ UNUTTUM</title>
+    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.png' />
+    <link rel="stylesheet" href="../public/css/giris.css">
 </head>
+
 <body>
-    <?php include "../page_parts/basic/log-header.php" ?>
-    <main>
-        <div id="reset-section">
-            <h2 class="title-style1">Password recovery</h2>
-            <p>Enter your email and click send button to get a confirmation code on your email box.</p>
+    <section>
+        <div class="login-box">
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post" class="flex-column">
-                <div class="classic-form-input-wrapper">
-                    <label for="username" class="classic-label">Email</label>
-                    <input type="text" name="email" placeholder="Enter your email" autocomplete="off" class="classic-input">
+                <h2>ŞİFREMİ UNUTTUM</h2>
+                
+                <?php if($validate->errors()): ?>
+                    <div class="error-message">
+                        <?php foreach($validate->errors() as $error): ?>
+                            <p class="error-messages"><?php echo $error; ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="text" name="email" autocomplete="off" placeholder="Email" required>
+                    <label>Emailinizi Girin</label>
                 </div>
-                <div class="classic-form-input-wrapper">
-                    <input type="hidden" name="token_conf_send" value="<?php echo Token::generate("reset-pasword"); ?>">
-                    <input type="submit" value="send" name="send" class="button-style-1" style="width: 70px;">
-                </div>
+                <input type="hidden" name="token_conf_send" value="<?php echo Token::generate("reset-pasword"); ?>"> 
+                <button type="submit" value="send" name="send">Kod Gönder</button>
             </form>
         </div>
-    </main>
+    </section>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

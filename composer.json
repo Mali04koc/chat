@@ -1,8 +1,8 @@
 {
     "name": "hostname47/composer",
     "require": {
-        "mailgun/mailgun-php":"~1.7.1",
-        "guzzlehttp/guzzle": "7.2.0"
+        "mailgun/mailgun-php": "^4.3",
+        "guzzlehttp/guzzle": "^7.9"
     },
     "autoload": {
         "psr-4": {
@@ -10,6 +10,11 @@
             "models\\": "models/",
             "Mailgun\\": "Mailgun/",
             "layouts\\": "layouts/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
         }
     }
 }

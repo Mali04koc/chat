@@ -30,13 +30,11 @@
                     Session::put("password-change-allow", "allowed");
                     Redirect::to("changepassword.php");
                 } else {
-                    $validate->addError("Invalide confirmation code");
+                    $validate->addError("Kodunuz geçersizdir. Lütfen tekrar deneyin.");
                 }
             }
 
-            foreach($validate->errors() as $error) {
-                echo $error . "<br>";
-            }
+            
         }
     }
 
@@ -46,35 +44,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password recovery</title>
-    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.ico' />
-    <link rel="stylesheet" href="../public/css/global.css">
-    <link rel="stylesheet" href="../public/css/log-header.css">
-    <style>
-        #reset-section {
-            padding: 20px;
-            width: 340px;
-        }
-    </style>
+    <title>KODU ONAYLA</title>
+    <link rel='shortcut icon' type='image/x-icon' href='../public/assets/images/favicons/favicon.png' />
+    <link rel="stylesheet" href="../public/css/giris.css">
 </head>
+
 <body>
-    <?php include "../page_parts/basic/log-header.php" ?>
-    <main>
-        <div id="reset-section">
-            <h2 class="title-style1">Email Confirmation</h2>
-            <p>We sent a confirmation code into your email, copy and past it here</p>
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" class="flex-column">
-                <div class="classic-form-input-wrapper">
-                    <label for="username" class="classic-label">Confirmation code</label>
-                    <input type="text" name="code" placeholder="Enter confirmation code" autocomplete="off" class="classic-input">
+    <section>
+        <div class="login-box">
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="post" class="flex-column">
+                
+            
+             <h2>KODU ONAYLAYIN</h2>
+            
+                <?php if ($validate->errors()): ?>
+                    <div class="error-message">
+                        <?php echo implode('<br>', $validate->errors()); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                    <input type="text" name="code" autocomplete="off" placeholder="Kod" required>
+                    <label>Kodunuzu Girin</label>
                 </div>
-                <div class="classic-form-input-wrapper">
-                    <input type="hidden" name="token_code_conf" value="<?php echo Token::generate("reset-pasword"); ?>">
-                    <input type="submit" value="confirm" name="confirm" class="button-style-1" style="width: 70px;">
-                </div>
+                <input type="hidden" name="token_code_conf" value="<?php echo Token::generate("reset-pasword"); ?>"> 
+                <button type="submit" value="confirm" name="confirm">Onayla</button>
             </form>
         </div>
-    </main>
+    </section>
+
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

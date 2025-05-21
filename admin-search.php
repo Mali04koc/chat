@@ -4,7 +4,7 @@
 
     use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
     use models\User;
-    use layouts\search\Search;
+    use layouts\search\admin_Search;
     // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
     // Here we check if the user is not logged in and we redirect him to login page
 
@@ -22,7 +22,7 @@
     }
     $welcomeMessage = '';
     
-    $search = new Search();
+    $search = new admin_Search();
     $showingNumber = 4;
     $searchKeyword = isset($_GET["q"]) ? $_GET["q"] : '';
     
@@ -51,15 +51,15 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="public/javascript/config.js" defer></script>
-    <script src="public/javascript/search.js" defer></script>
+    <script src="public/javascript/admin-search.js" defer></script>
     <script src="public/javascript/global.js" defer></script>
     <script src="public/javascript/master-right.js" defer></script>
 </head>
 <body>
-    <?php include_once "page_parts/basic/header.php"; ?>
+    <?php include_once "page_parts/basic/admin-header.php"; ?>
     <main>
         <div id="global-container">
-            <?php include_once "page_parts/basic/master-left.php"; ?>
+            <?php include_once "page_parts/basic/admin-master-left.php"; ?>
             <div id="master-middle">
                 <div class="green-message">
                     <p class="green-message-text"><?php echo $welcomeMessage; ?></p>
@@ -79,12 +79,12 @@
                 <div class="search-result-type-container">
                     <div style="padding: 8px">
                         <div class="flex-space">
-                            <h1 class="title-style-4">Aramalar</h1>
-                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">see more</a>
+                            <h1 class="title-style-4">ARAMALAR</h1>
+                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">Daha Fazlasını Gör</a>
                         </div>
                         <p class="label-style-2">Sonuç <span>
                             <?php echo ($number_of_users > $showingNumber) ? $showingNumber : $number_of_users; ?>
-                            </span> /<span><?php echo $number_of_users; ?></span> gösteriliyor
+                            </span> / <span><?php echo $number_of_users; ?></span> gösteriliyor.
                         </p>
                     </div>
                     <div class="search-result">
@@ -146,7 +146,6 @@
 
                 </script>
             </div>
-            <?php include_once "page_parts/basic/master-right.php" ?>
         </div>
     </main>
 </body>

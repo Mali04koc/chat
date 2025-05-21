@@ -45,7 +45,7 @@ class Validation {
                     //$item = htmlspecialchars($item);
                     $name = $item;
                     if($rule === "required" && $rule_value == true && empty($name)) {
-                        $this->addError("{$rules['name']} field is required");
+                        $this->addError("{$rules['name']} zorunlu bir alandır");
                     } else if(!empty($name)) {
                         switch($rule) {
                             // Some are implemented here in switch and some of them has their own functions like email func
@@ -98,11 +98,11 @@ class Validation {
                                 $type = $finfo->file($file);*/
                                 if (!in_array($original_extension, $allowedImageExtensions))
                                 {
-                                    $this->addError("Only PNG, JPG, JPEG, and GIF image types are allowed to be used in {$rules['name']} image!");
+                                    $this->addError("Sadece PNG, JPG, JPEG ve GIF formatındaki resimler {$rules['name']} resmi için kullanılabilir!");
                                 }
 
                                 if ($img["size"] > 5500000) {
-                                    $this->addError("Sorry, your file is too large.");
+                                    $this->addError("Üzgünüm, dosyanız çok büyük.");
                                 }
 
                                 // Add some layer of image upload security later
@@ -119,12 +119,12 @@ class Validation {
                                 $type = $finfo->file($file);*/
                                 if (!in_array($original_extension, $allowedVideoExtensions))
                                 {
-                                    $this->addError("Only The following video formats are supported to be used.");
+                                    $this->addError("Sadece bu formattaki videoları destekliyoruz.");
                                 }
 
                                 // Video should not exceed 1GB
                                 if ($img["size"] > 1073741824) {
-                                    $this->addError("Sorry, your file is too large.");
+                                    $this->addError("Üzgünüm, dosyanız çok büyük.");
                                 }
 
                         }
@@ -139,29 +139,29 @@ class Validation {
                     $item = htmlspecialchars($item);
     
                     if($rule === "required" && $rule_value == true && empty($value)) {
-                        $this->addError("{$rules['name']} field is required");
+                        $this->addError("{$rules['name']} zorunlu bir alandır");
                     } else if(!empty($value)) {
                         switch($rule) {
                             // Some are implemented here in switch and some of them has their own functions like email func
                             case 'min':
                                 if(strlen($value) < $rule_value) {
-                                    $this->addError("{$rules['name']} must be a minimum of $rule_value characters.");
+                                    $this->addError("{$rules['name']} minimum $rule_value karakter olmak zorunda.");
                                 }
                             break;
                             case 'max':
                                 if(strlen($value) > $rule_value) {
-                                    $this->addError("{$rules['name']} must be a maximum of $rule_value characters.");
+                                    $this->addError("{$rules['name']} maximum $rule_value karakter olmak zorunda.");
                                 }
                             break;
                             case 'matches':
                                 if($value != $source[$rule_value]) {
-                                    $this->addError("Passwords should be the same.");
+                                    $this->addError("Şifre aynı olmak zorunda.");
                                 }
                             break;
                             case 'unique':
                                 $this->_db->query("SELECT * from user_info WHERE $item = '$value'");
                                 if($this->_db->count()) {
-                                    $this->addError("{$rules['name']} already exists.");
+                                    $this->addError("{$rules['name']} zaten var.");
                                 }
                             break;
                             case 'email-or-username':
@@ -169,7 +169,7 @@ class Validation {
                                 $email_or_username = filter_var($email_or_username, FILTER_SANITIZE_EMAIL);
                                 if(strpos($email_or_username, '@') == true) {
                                     if(!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $email_or_username)) {
-                                        $this->addError("Invalid email address.");
+                                        $this->addError("Geçersiz e-posta adresi.");
                                     }
                                 } else {
                                     // Handle username to be alphanumeric or just keep it like so (it's fine at least for now)
@@ -180,15 +180,15 @@ class Validation {
                                 $email = filter_var($email, FILTER_SANITIZE_EMAIL);
                                 if(strpos($email, '@') == true) {
                                     if(!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $email)) {
-                                        $this->addError("Invalid email address.");
+                                        $this->addError("Geçersiz e-posta adresi.");
                                     }
                                 } else {
-                                    $this->addError("Invalid email address.");
+                                    $this->addError("Geçersiz e-posta adresi.");
                                 }
                             break;
                             case 'range':
                                 if(!in_array($value, $rule_value))
-                                    $this->addError("{$rules['name']} field is either not set or invalid !");
+                                    $this->addError("{$rules['name']} alanı ya ayarlanmamış ya da geçersiz!");
                             break;
                         }
                     }
