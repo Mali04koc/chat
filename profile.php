@@ -37,6 +37,18 @@ if(isset($_POST["save-profile-edites"])) {
             )
         ));
 
+        // Profil ve kapak resmi dizinlerini tanımla
+        $profilePicturesDir = 'data/users/' . $user->getPropertyValue("username") . "/media/pictures/";
+        $coversDir = 'data/users/' . $user->getPropertyValue("username") . "/media/covers/";
+
+        // Dizin yoksa oluştur
+        if (!file_exists($profilePicturesDir)) {
+            mkdir($profilePicturesDir, 0777, true);
+        }
+        if (!file_exists($coversDir)) {
+            mkdir($coversDir, 0777, true);
+        }
+
         // İlk profil resmi yükleme işlemini bul
         if(!empty($_FILES["picture"]["name"])) {
             // Mevcut kodu buradan itibaren silin
