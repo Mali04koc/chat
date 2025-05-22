@@ -19,7 +19,7 @@ require_once "../../functions/sanitize_text.php";
 $is_reply = false;
 $sender = sanitize_id($_POST["sender"]);
 $receiver = sanitize_id($_POST["receiver"]);
-$message = sanitize_id($_POST["message"]);
+$message = sanitize_text($_POST["message"]);
 $message_date = date("Y/m/d H:i:s");
 
 if(isset($_POST["is_reply"])) {
