@@ -95,5 +95,3 @@
     </div>
 </header>
 
-<!-- <div id="header-background"></div> -->
- <!-- <div id="header-background"></div> -->
