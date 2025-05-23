@@ -35,7 +35,7 @@
             <div id="master-left-container" style=" padding: 16px; border-radius: 8px;">
                 <p style="color: #00ff00; font-size: 18px; margin-bottom: 16px; font-weight: bold;">Menü</p>
 
-                <a href="<?php echo Config::get('root/path') . 'admin.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
+                <a href="<?php echo Config::get('root/path') . 'admin-user.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
                     <ion-icon name="people-outline" style="font-size: 20px; margin-right: 8px; color: #ffffff;"></ion-icon>
                     <span style="font-size: 16px; font-weight: 500;">Kullanıcılar</span>
                 </a>

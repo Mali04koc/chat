@@ -101,6 +101,33 @@ class DB {
     public function count() {
         return $this->_count;
     }
+
+     public function delete($table, $conditions = array()) {
+        /*
+            Kullanım: 
+            DB::getInstance()->delete('user_info', ['id', '=', '5']);
+        */
+
+        $this->_error = false;
+
+        if (count($conditions) === 3) {
+            $field    = $conditions[0];
+            $operator = $conditions[1];
+            $value    = $conditions[2];
+
+            $allowedOperators = ['=', '>', '<', '>=', '<=', '<>'];
+            if (in_array($operator, $allowedOperators)) {
+                $sql = "DELETE FROM {$table} WHERE {$field} {$operator} ?";
+                if ($this->query($sql, [$value])->error()) {
+                    $this->_error = true;
+                }
+            }
+        } else {
+            $this->_error = true;
+        }
+
+        return !$this->_error;
+    }
 }
 
 
