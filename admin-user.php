@@ -6,6 +6,7 @@ require_once "classes/middleware.php";
 
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{Post, UserRelation, Follow, User};
+<<<<<<< Updated upstream
 
 global $user;
 
@@ -15,6 +16,8 @@ $middleware->handle();
 
 // Start output buffering
 ob_start();
+=======
+>>>>>>> Stashed changes
 
 // Kullanıcı giriş kontrolü
 if (!$user->getPropertyValue("isLoggedIn")) {
