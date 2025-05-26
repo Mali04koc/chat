@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>V01D47 - ERROR</title>
+    <title>NEW WORLD - ERROR</title>
     <link rel='shortcut icon' type='image/x-icon' href='../../public/assets/images/favicons/favicon.ico' />
     <link rel="stylesheet" href="../../public/css/global.css">
     <link rel="stylesheet" href="../../public/css/header.css">
@@ -33,9 +33,9 @@
     <main>
         <div id="main-wrapper">
             <h1 class="big-error-title">404 ERROR</h1>
-            <h2 class="medium-error-title">Page Not Found</h2>
+            <h2 class="medium-error-title">Sayfa Bulunamadı</h2>
             <div>
-                The Page you're looking for doesn't exist or an other error occured. Go To <a href="<?php echo Config::get("root/path") . "index.php" ?>" class="classic-link-style1">Home Page</a>
+                Aradığın sayfa bulunmuyor veya hatalı halde.LÜTFEN ANASAYFAYA <a href="<?php echo Config::get("root/path") . "index.php" ?>" class="classic-link-style1">GERİ DÖN</a>
             </div>
         </div>
     </main>

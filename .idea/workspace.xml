@@ -6,11 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f0018dfe-db7e-420d-92ee-05dfec6f4192" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/init.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/init.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/models/User.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/page_parts/profile/owner-profile-header.php" beforeDir="false" afterPath="$PROJECT_DIR$/page_parts/profile/owner-profile-header.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/profile.php" beforeDir="false" afterPath="$PROJECT_DIR$/profile.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/settings.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-user.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin-user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/page_parts/basic/post_creator.php" beforeDir="false" afterPath="$PROJECT_DIR$/page_parts/basic/post_creator.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/people.php" beforeDir="false" afterPath="$PROJECT_DIR$/people.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,8 +112,6 @@
       <workItem from="1747998054676" duration="375000" />
       <workItem from="1748000219157" duration="714000" />
       <workItem from="1748001721300" duration="403000" />
-      <workItem from="1748002776916" duration="4681000" />
-      <workItem from="1748287325519" duration="60000" />
     </task>
     <servers />
   </component>

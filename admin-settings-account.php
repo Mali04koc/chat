@@ -10,6 +10,7 @@ use models\User;
 
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
+
 $middleware = new \classes\AuthMiddleware();
 $middleware->handle();
 
@@ -82,18 +83,18 @@ if(isset($_POST["save-changes"])) {
                     $new_password = Hash::make($new_password, $salt);
 
                     if($u->update_property("password", $new_password)) {
-                        $save_success_message = 'Changes saved successfully !';
+                        $save_success_message = 'Değişiklikler başarıyla kaydedildi!';
                     } else {
-                        $save_failure_message = "Pasword updating error ! please try again in a few moments";    
+                        $save_failure_message = "Şifre güncellenirken bir hata oluştu! Lütfen birkaç dakika sonra tekrar deneyin";    
                     }
                 } else {
-                    $save_failure_message = "Invalide password !";
+                    $save_failure_message = "Geçersiz şifre!";
                 }
             } else {
-                $save_failure_message = "Invalide email or not present in our records !";
+                $save_failure_message = "Geçersiz e-posta veya kayıtlarımızda bulunamadı!";
             }
         } else {
-            $save_failure_message = "Invalide email or not present in our records !";
+            $save_failure_message = "Geçersiz e-posta veya kayıtlarımızda bulunamadı!";
         }
     } else {
         $save_failure_message = $validator->errors()[0];
@@ -128,10 +129,10 @@ if(isset($_POST["save-changes"])) {
 </head>
 <body>
 <main>
-    <?php require_once "page_parts/settings/left-panel.php" ?>
+    <?php require_once "page_parts/settings/admin-left-panel.php" ?>
     <div id="global-container">
         <div id="setting-master-container">
-            <h1 class="no-margin">Security</h1>
+            <h1 class="no-margin">Güvenlik</h1>
             <div class="setting-block-line-separator"></div>
             <div>
                 <div class="green-message">

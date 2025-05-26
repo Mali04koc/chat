@@ -114,58 +114,14 @@ header {
     padding: 0 0 0 6px;
 }
 
-.message-content-container {
-    padding: 0 0 0 6px;
-}
-
-.notif-content {
-    margin: 0;
-    padding: 0;
-}
-
-.notif-date {
-    margin: 0;
-    margin-top: 3px;
-    font-size: 12px;
-    color: rgb(0, 107, 207);
-}
-
-.action-doer {
-    font-size: 15px;
-    font-weight: 600;
-}
-
+.message-content-container,
 .account-user {
-    font-size: 17px;
-    font-weight: 600;
-    margin: 0;
-}
-
-.message-sender {
-    font-size: 15px;
-    font-weight: 600;
-    margin: 0;
-}
-
-#user-profile-button {
-    padding: 3px 6px 3px 4px;
-    display: flex;
-    color: white;
-    text-decoration: none;
-    border-radius: 20px;
-    font-weight: 600;
-    margin: 0 4px;
-
-    background-color: rgb(37, 37, 37);
-    transition: all 0.4s ease;
-}
-
-#user-profile-button:hover {
-    background-color: rgb(70, 70, 70);
-}
-
-.options-container {
-    max-height: 450px;
+    color: #fff !important;
+    font-size: 18px !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 9999 !important;
+    position: relative !important;
 }
 
 .message-content {

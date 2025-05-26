@@ -6,9 +6,6 @@ use models\User;
 
 // kullanıcı bilgilerini tutmak için session başlamadıysa başlatıyoruz
 if (session_status() == PHP_SESSION_NONE) {
-    // Session ayarlarını yapılandır
-    ini_set('session.cookie_lifetime', 86400); // 24 saat
-    ini_set('session.gc_maxlifetime', 86400); // 24 saat
     session_start();
 }
 
@@ -36,8 +33,8 @@ $GLOBALS["config"] = array(
         )
     ),
     "root"=> array(
-        'path'=>'http://localhost/chat/',
-        'project_name'=>"chat"
+        'path'=>'http://127.0.0.1/CHAT/',
+        'project_name'=>"CHAT"
     ),
     'mailgun' => [
         'api_key' => 'dbe9d26c33233ca8c080f12f4dd9f76f-e71583bb-20998d10',
@@ -75,11 +72,18 @@ if(Cookie::exists(Config::get("remember/cookie_name")) && !Session::exists(Confi
         }
 }
 
+// admin panelinde kullanıcı aktif mi yoksa değil mi olduğunu görmek için anlık olarak aktiflik durumunu güncelliyoruz
 if($user->getPropertyValue("isLoggedIn")) {
     $user->update_active();
 }
 
-
+if (isset($user) && $user->getPropertyValue("isLoggedIn")) {
+    $db = DB::getInstance();
+    $db->query(
+        "UPDATE user_info SET last_active_update = ? WHERE id = ?",
+        [date('Y-m-d H:i:s'), $user->getPropertyValue('id')]
+    );
+}
 
 /*
 

@@ -3,21 +3,16 @@ require_once "vendor/autoload.php";
 require_once "core/init.php";
 require_once "classes/middleware.php";
 
-
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{Post, UserRelation, Follow, User};
-<<<<<<< Updated upstream
 
 global $user;
-
 
 $middleware = new \classes\AuthMiddleware();
 $middleware->handle();
 
 // Start output buffering
 ob_start();
-=======
->>>>>>> Stashed changes
 
 // Kullanıcı giriş kontrolü
 if (!$user->getPropertyValue("isLoggedIn")) {
@@ -32,50 +27,6 @@ if(isset($_POST["logout"])) {
     }
 }
 
-// SADECE AJAX istekleri için
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && strpos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
-    // Prevent any output before JSON response
-    ob_clean();
-    
-    // Set JSON header
-    header('Content-Type: application/json');
-    
-    try {
-        $rawInput = file_get_contents('php://input');
-        $data = json_decode($rawInput);
-        
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new Exception('JSON decode error: ' . json_last_error_msg());
-        }
-        
-        if (!$data || !isset($data->id)) {
-            throw new Exception('Geçersiz veri: ID bulunamadı');
-        }
-
-        // Admin kontrolü
-        if (!$user->isAdmin()) {
-            throw new Exception('Yetkisiz işlem: Admin değilsiniz');
-        }
-
-        // DB işlemi
-        $db = DB::getInstance();
-        $result = $db->delete('user_info', ['id', '=', $data->id]);
-        
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } else {
-            throw new Exception('Silme işlemi başarısız: ' . ($db->error() ?? 'Bilinmeyen hata'));
-        }
-    } catch (Exception $e) {
-        http_response_code(400);
-        echo json_encode([
-            'success' => false,
-            'error' => $e->getMessage()
-        ]);
-    }
-    exit;
-}
-
 // Normal sayfa yüklemeleri için
 $db = DB::getInstance();
 $query = $db->query("SELECT * FROM user_info WHERE user_type != 2 ORDER BY joined DESC");
@@ -87,7 +38,7 @@ $users = $query->results();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEW WORLD-KULLANICI YÖNETİMİ</title>
+    <title>NEW WORLD-AKTİFLİK YÖNETİMİ</title>
     <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.png' />
     <link rel="stylesheet" href="public/css/global.css">
     <link rel="stylesheet" href="public/css/header.css">
@@ -98,7 +49,8 @@ $users = $query->results();
     <link rel="stylesheet" href="public/css/post.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-          #master-left {
+     
+            #master-left {
             color: white !important;
         }
 
@@ -165,19 +117,7 @@ $users = $query->results();
         .admin-table tbody tr:hover td {
             background: #f0f0f0 !important;
         }
-        .delete-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 0.97em;
-        }
-        .delete-btn:hover {
-            background-color: #b52a37;
-        }
+        
      
         @media (max-width: 900px) {
             .admin-table-wrapper {
@@ -225,11 +165,9 @@ $users = $query->results();
                             <th>Ad</th>
                             <th>Soyad</th>
                             <th>E-posta</th>
-                            <th>Kayıt</th>
-                            <th>Biyo</th>
-                            <th>Profil</th>
-                            <th>Arka Plan</th>
-                            <th>Ban</th>
+                            <th>Aktiflik</th>
+                            <th>Durum</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -240,12 +178,31 @@ $users = $query->results();
                                 <td><?= htmlspecialchars($user->firstname) ?></td>
                                 <td><?= htmlspecialchars($user->lastname) ?></td>
                                 <td><?= htmlspecialchars($user->email) ?></td>
-                                <td><?= htmlspecialchars($user->joined) ?></td>
-                                <td><?= htmlspecialchars($user->bio ?? 'Boş') ?></td>
-                                <td><?= htmlspecialchars($user->profile_image ?? 'Boş') ?></td>
-                                <td><?= htmlspecialchars($user->background_image ?? 'Boş') ?></td>
+                                <td><?= htmlspecialchars($user->last_active_update) ?></td>
                                 <td>
-                                    <button class="delete-btn" data-id="<?= htmlspecialchars($user->id) ?>">Ban</button>
+                                    <?php
+                                        // Kullanıcı aktif mi kontrolü (örnek: son aktiflik 5 dakika içinde ise aktif)
+                                        $isActive = false;
+                                        if (!empty($user->last_active_update)) {
+                                            $lastActive = strtotime($user->last_active_update);
+                                            $now = time();
+                                            // 5 dakika (300 saniye) içinde aktifse
+                                            if ($now - $lastActive <= 300) {
+                                                $isActive = true;
+                                            }
+                                        }
+                                    ?>
+                                    <?php if ($isActive): ?>
+                                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #4caf50;"></span>
+                                            <span style="color: #4caf50; font-weight: 600;">Aktif</span>
+                                        </span>
+                                    <?php else: ?>
+                                        <span style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #7a8a7a;"></span>
+                                            <span style="color: #7a8a7a; font-weight: 600;">İnaktif</span>
+                                        </span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

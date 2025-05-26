@@ -48,7 +48,7 @@ class DB {
     */
     public function query($sql, $params = array()) {
         /* Here we set error to false in order to not return error of some previous query */
-        $this->error = false;
+        $this->_error = false;
 
         // Check if the query has been prepared successfully
         // Here we assign and at the sametime check if a prepared statement has been set

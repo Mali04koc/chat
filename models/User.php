@@ -43,12 +43,6 @@ class User implements \JsonSerializable {
             
             if($this->fetchUser("id", $dt)) {
                 $this->isLoggedIn = true;
-                // Session'ı yenile
-                Session::put($this->sessionName, $dt);
-            } else {
-                // Session geçersizse temizle
-                Session::delete($this->sessionName);
-                $this->isLoggedIn = false;
             }
         }
     }
@@ -297,27 +291,22 @@ class User implements \JsonSerializable {
         $keywords = htmlspecialchars($keywords);
         $keywords = trim($keywords);
 
-        /*
-        strtolower fonksiyonu ile arama kutusuna yazılan kelimeleri küçük harfe çeviriyoruz.mb_strtolower
-        fonksiyonu ise Türkçe karakterleri de küçük harfe çeviriyor.
-
-        htmlspecialchars fonksiyonu ile HTML özel karakterleri (<, >, ", ', &) güvenli hale getirir.
-
-        trim fonksiyonu ile başındaki ve sonundaki boşlukları temizliyoruz.
-        */
-
         $keywords = explode(' ', $keyword);
 
         if($keywords[0] == '') {
             $query = "";
         } else {
-            $query = "SELECT * FROM user_info WHERE user_type != 2 "; // Exclude admin users (user_type = 2)
+            $query = "SELECT * FROM user_info ";
             for($i=0;$i<count($keywords);$i++) {
                 $k = $keywords[$i];
                 if($i==0)
-                    $query .= "AND (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
+                    $query .= "WHERE (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') AND user_type != 2 ";
                 else
                     $query .= "OR (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
+            }
+            // Eğer birden fazla anahtar kelime varsa, sonrasında eklenen OR'lar için de adminleri hariç tutmak için AND user_type != 2 eklenmeli
+            if(count($keywords) > 1) {
+                $query .= " AND user_type != 2";
             }
         }
 
@@ -352,39 +341,62 @@ class User implements \JsonSerializable {
 
     
     public function login($email_or_username='', $password='', $remember=false) {
+        // 3 parametreli login fonksiyonu,remember default false
+        //Eğer $this->id tanımlanmışsa (yani kullanıcı nesnesi zaten giriş yapmışsa),
+        // bu kullanıcıyı doğrudan oturumda aktif hale getirir. 
         if($this->id) {
             Session::put($this->sessionName, $this->id);
-            $this->isLoggedIn = true;
             return true;
-        } else {
+        }
+        // yoksa önce username e göre arar ama strpos ile email_or_username değişkeninde @ bulursa
+        // arama değişkenini emaile döndürür 
+        else {
             $fetchBy = "username";
             if(strpos($email_or_username, "@")) {
                 $fetchBy = "email";
             }
             
+            /* zaten arama yapılcak kategori mesela email ve $email_or_usernameden gelen değer mesela
+            mk12334@gmail.com belli.Şimdi fetchUser la o kullanıcıyı çektik
+
+            Sonra onun şifresiyle hashı kıyasladık doğru mu diye,doğruysa sessionı başlattık.isLoggedIn True oldu
+            */
             if($this->fetchUser($fetchBy, $email_or_username)) {
                 if($this->password === Hash::make($password, $this->salt)) {
                     Session::put($this->sessionName, $this->id);
-                    $this->isLoggedIn = true;
+                    $this->isLoggedIn = true; 
                     
+                    // eğer kullanıcı beni hatırla butonuna bastıysa,ilk kullanıcı idsiyle user_session tablosunda aranır
                     if($remember) {
-                        $hash = Hash::unique();
-                        $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
-                            array($this->id, $hash));
+                        $this->db->query("SELECT * FROM users_session WHERE user_id = ?",
+                            array($this->id));
+                        
+                        // eğer böyle bir kullanıcı yoksa o zaman yeni bir unique hash oluşturup user_sessions tablosuna insert edersin
+                        if(!$this->db->count()) {
+                            $hash = Hash::unique();
+                            $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
+                                array($this->id, $hash));
+                        } else {
+                            // Eğer varsa böyle biri o zaman kayıtlı hashi alırsın,demek ki daha önceden girmiş ama beni hatırla butonuna basmamış 
+                            $hash = $this->db->results()[0]->hash;
+                        }
+                         // en sonda tüm bilgilerle cookie oluşturursun
                         Cookie::put($this->cookieName, $hash, Config::get("remember/cookie_expiry"));
                     }
                     return true;
                 }
             }
         }
+
         return false;
     }
 
     // Logout yaptığımızda bizim session,cookie hash ve databaseden sessionı silmemiz gerekir
     public function logout() {
+        // Kullanıcıyı inaktif yap
+        $this->db->query("UPDATE user_info SET last_active_update = NULL WHERE id = ?", array($this->id));
 
         $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
-
         Session::delete($this->sessionName);
         Session::delete(Config::get("session/tokens/logout"));
         Cookie::delete($this->cookieName);
@@ -402,14 +414,7 @@ class User implements \JsonSerializable {
     }
 
     public function isLoggedIn() {
-        if(Session::exists($this->sessionName)) {
-            $dt = Session::get($this->sessionName);
-            if($this->fetchUser("id", $dt)) {
-                $this->isLoggedIn = true;
-                return true;
-            }
-        }
-        return false;
+        return $this->isLoggedIn;
     }
 
     public function jsonSerialize():mixed
@@ -420,5 +425,9 @@ class User implements \JsonSerializable {
             "username"=>$this->username
         );
         return $vars;
+    }
+
+    public function isAdmin() {
+        return $this->user_type == 2;
     }
 }
