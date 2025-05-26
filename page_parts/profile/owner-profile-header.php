@@ -8,6 +8,7 @@
 <div class="flex-space" id="owner-profile-menu-and-profile-edit">
     <div class="row-v-flex">
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Gönderilerin</a>
     </div>
     <div>
@@ -61,6 +62,9 @@
                 </div>
             </div>
         </div>
+=======
+        <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Timeline</a>
+>>>>>>> Stashed changes
 =======
         <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Timeline</a>
 >>>>>>> Stashed changes

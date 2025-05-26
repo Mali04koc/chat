@@ -3,8 +3,12 @@
 require_once "vendor/autoload.php";
 require_once "core/init.php";
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 require_once "classes/middleware.php";
 
+=======
+require_once 'functions/sanitize_text.php';
+>>>>>>> Stashed changes
 =======
 require_once 'functions/sanitize_text.php';
 >>>>>>> Stashed changes
