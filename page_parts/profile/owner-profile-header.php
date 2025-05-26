@@ -7,19 +7,13 @@
 
 <div class="flex-space" id="owner-profile-menu-and-profile-edit">
     <div class="row-v-flex">
-        <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Timeline</a>
-        <a href="" class="profile-menu-item">Photos</a>
-        <a href="" class="profile-menu-item">Videos</a>
-        <a href="" class="profile-menu-item">Likes</a>
-        <a href="" class="profile-menu-item">Comments</a>
+        <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Gönderilerin</a>
     </div>
     <div>
-        <a href="" class="button-style-2" id="edit-profile-button">Edit profile</a>
         <div class="viewer">
             <div id="edit-profile-container">
                 <div class="flex-space" id="edit-profile-header">
                     <a href="" class="close-style-1 close-viewer"></a>
-                    <h2 class="title-style-5 black">Edit profile</h2>
 
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" id="save-profile-edits-form" enctype="multipart/form-data">
                         <input type="hidden" name="save_token" value="<?php echo Token::generate("saveEdits"); ?>">
@@ -61,11 +55,7 @@
                             <label for="bio" class="label-style-1">Bio</label>
                             <textarea type="text" form="save-profile-edits-form" maxlength="800" class="textarea-style-1" placeholder="Add your bio.." name="bio"><?php echo $fetched_user->getPropertyValue('bio'); ?></textarea>
                         </div>
-                        <div class="field-style-2" style="margin-bottom: 12px">
-                            <label for="private" class="label-style-1">Private account</label>
-                            <div class="toggle-button-style-1" id="private-account-button"></div>
-                            <input type="hidden" form="save-profile-edits-form" name="private" value="<?php echo $private ?>" id="private-account-state">
-                        </div>
+                        
                     </div>
                 </div>
             </div>

@@ -16,14 +16,14 @@ require_once "../../functions/sanitize_id.php";
 
 if(!isset($_POST["post_id"])) {
     echo json_encode(array(
-        "message"=>"post id required !",
+        "message"=>"Gönderi ID'si gerekli!",
         "success"=>false
     ));
 }
 
 if(!isset($_POST["current_user_id"])) {
     echo json_encode(array(
-        "message"=>"Current user id required !",
+        "message"=>"Mevcut kullanıcı ID'si gerekli!",
         "success"=>false
     ));
 }

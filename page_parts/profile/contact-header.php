@@ -17,10 +17,8 @@
 
 <div class="flex-space" id="owner-profile-menu-and-profile-edit">
     <div class="row-v-flex">
-        <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Timeline</a>
-        <a href="" class="profile-menu-item">Comments</a>
-        <a href="" class="profile-menu-item">Photos</a>
-        <a href="" class="profile-menu-item">Videos</a>
+        <a href="" class="profile-menu-item profile-menu-item-selected" style="border-radius: 0">Gönderilerin</a>
+      
     </div>
     <div class="flex-row-column">
         <form action="" method="GET" class="flex follow-form follow-menu-header-form">

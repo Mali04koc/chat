@@ -12,8 +12,8 @@
     $logo_path = $root . "public/assets/images/logos/large.png";
     $index_page_path = $root . "admin.php";
 
-    $setting_profile_path = $root . "settings.php";
-    $setting_account_path = $root . "settings-account.php";
+    $setting_profile_path = $root . "admin-settings.php";
+    $setting_account_path = $root . "admin-settings-account.php";
 
 ?>
 <div id="setting-left-pannel">

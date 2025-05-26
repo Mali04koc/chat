@@ -23,7 +23,7 @@
     <header>
       <h1 data-aos="fade-down" data-aos-duration="1500" class="logo">NEW WORLD</h1>
 
-     <a data-aos="fade-down" data-aos-duration="1500" class="btn-signing" href="../Login/log-header.php">
+     <a data-aos="fade-down" data-aos-duration="1500" class="btn-signing" href="log-header.php">
       Giriş &gt;
     </a>
 
@@ -35,7 +35,7 @@
      data-aos-easing="ease-in-back"
      data-aos-delay="300"
      data-aos-offset="0" data-aos-duration="1500" class="tag-box">
-        <div class="tag"> YENİ DÜNYAYA HOŞGELDİNİZ &wedbar;</div>
+        <div class="tag"> NEW WORLDYA HOŞGELDİNİZ &wedbar;</div>
       </div>
 
       <h1   data-aos="fade-zoom-in"

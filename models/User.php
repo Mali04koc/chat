@@ -291,33 +291,25 @@ class User implements \JsonSerializable {
         $keywords = htmlspecialchars($keywords);
         $keywords = trim($keywords);
 
-        /*
-        strtolower fonksiyonu ile arama kutusuna yazılan kelimeleri küçük harfe çeviriyoruz.mb_strtolower
-        fonksiyonu ise Türkçe karakterleri de küçük harfe çeviriyor.
-
-        htmlspecialchars fonksiyonu ile HTML özel karakterleri (<, >, ", ', &) güvenli hale getirir.
-
-        trim fonksiyonu ile başındaki ve sonundaki boşlukları temizliyoruz.
-
-        */
-
         $keywords = explode(' ', $keyword);
 
         if($keywords[0] == '') {
-            
             $query = "";
         } else {
             $query = "SELECT * FROM user_info ";
             for($i=0;$i<count($keywords);$i++) {
                 $k = $keywords[$i];
                 if($i==0)
-                    $query .= "WHERE username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%' ";
+                    $query .= "WHERE (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') AND user_type != 2 ";
                 else
-                    $query .= "OR username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%' ";
+                    $query .= "OR (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
+            }
+            // Eğer birden fazla anahtar kelime varsa, sonrasında eklenen OR'lar için de adminleri hariç tutmak için AND user_type != 2 eklenmeli
+            if(count($keywords) > 1) {
+                $query .= " AND user_type != 2";
             }
         }
 
-       
         DB::getInstance()->query($query);
         return DB::getInstance()->results();
     }
@@ -401,9 +393,10 @@ class User implements \JsonSerializable {
 
     // Logout yaptığımızda bizim session,cookie hash ve databaseden sessionı silmemiz gerekir
     public function logout() {
+        // Kullanıcıyı inaktif yap
+        $this->db->query("UPDATE user_info SET last_active_update = NULL WHERE id = ?", array($this->id));
 
         $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
-
         Session::delete($this->sessionName);
         Session::delete(Config::get("session/tokens/logout"));
         Cookie::delete($this->cookieName);
@@ -432,5 +425,9 @@ class User implements \JsonSerializable {
             "username"=>$this->username
         );
         return $vars;
+    }
+
+    public function isAdmin() {
+        return $this->user_type == 2;
     }
 }

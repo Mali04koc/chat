@@ -1,14 +1,18 @@
-
 <?php
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
+require_once "classes/middleware.php";
+
 
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{User, Post, Follow, UserRelation};
 use layouts\post\{Post as Post_view};
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
+
+$middleware = new \classes\AuthMiddleware();
+$middleware->handle();
 
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
@@ -196,7 +200,7 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
     <main class="relative">
         <div class="post-viewer-only">
             <div class="viewer-post-wrapper">
-                <img src="" class="post-view-image" alt="">
+                <img src="" class="post-view-image" alt="Gönderi Görüntüsü">
                 <div class="close-view-post"></div>
             </div>
         </div>
@@ -210,7 +214,7 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
                         <div class="relative">
                             <a href="" class="close-viewer-style close-viewer"></a>
                         </div>
-                        <img src="" class="profile-cover-picture-preview" alt="User's name cover picture">
+                        <img src="" class="profile-cover-picture-preview" alt="Kullanıcının kapak fotoğrafı">
                     </div>
                 </div>
                 <div id="profile-picture-container">
@@ -225,7 +229,7 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
                             <a href="" class="close-viewer-style close-viewer"></a>
                         </div>
                         <div class="profile-picture-preview-container">
-                            <img src="" class="profile-picture-preview" alt="User's name Profile picture">
+                            <img src="" class="profile-picture-preview" alt="Kullanıcının profil fotoğrafı">
                         </div>
                     </div>
                 </div>
@@ -248,32 +252,32 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
                     <a href="" class="user-info-section-link">
                         <div>
                             <h2 class="title-style-4"><?php echo $posts_number; ?></h2>
-                            <p class="regular-text-style-2">Posts</p>
+                            <p class="regular-text-style-2">Gönderiler</p>
                         </div>
                     </a>
                     <a href="" class="user-info-section-link">
                         <div>
                             <h2 class="title-style-4"><?php echo $followers_number; ?></h2>
-                            <p class="regular-text-style-2">Followers</p>
+                            <p class="regular-text-style-2">Takipçi</p>
                         </div>
                     </a>
                     <a href="" class="user-info-section-link">
                         <div>
                             <h2 class="title-style-4"><?php echo $followed_number; ?></h2>
-                            <p class="regular-text-style-2">Following</p>
+                            <p class="regular-text-style-2">Takip Edilen</p>
                         </div>
                     </a>
                     <a href="" class="user-info-section-link">
                         <div>
                             <h2 class="title-style-4"><?php echo $friends_number; ?></h2>
-                            <p class="regular-text-style-2">Friends</p>
+                            <p class="regular-text-style-2">Arkadaşlar</p>
                         </div>
                     </a>
                 </div>
                 <div class="user-info-section">
-                    <h2 class="title-style-4">About</h2>
+                    <h2 class="title-style-4">Hakkında</h2>
                     <p class="regular-text" style="margin: 10px 0"><?php echo $bio; ?></p>
-                    <p class="calendar-icon regular-text-style-2">Member since <?php echo date("F Y", strtotime($fetched_user->getPropertyValue("joined"))) ?></p>
+                    <p class="calendar-icon regular-text-style-2">Katılma Tarihi <?php echo date("F Y", strtotime($fetched_user->getPropertyValue("joined"))) ?></p>
 
                     <div style="margin-top: 8px">
                         <?php 
@@ -296,8 +300,8 @@ METADATA;
                 </div>
                 <div class="user-info-section">
                     <div class="flex-space">
-                        <h2 class="title-style-4">Media</h2>
-                        <a href="" class="link-style-1">Show all</a>
+                        <h2 class="title-style-4">Medya</h2>
+                        <a href="" class="link-style-1">Hepsini Göster</a>
                     </div>
                     <div class="flex flex-wrap">
                         <?php
@@ -351,8 +355,8 @@ PPI;
                 <div id="posts-container">
                     <?php if(count($posts) == 0) { ?>
                         <div id="empty-posts-message">
-                            <h2>Try to add friends, or follow them to see their posts ..</h1>
-                            <p>click <a href="http://127.0.0.1/CHAT/search.php" class="link" style="color: rgb(66, 219, 66)">here</a> to go to the search page</p>
+                            <h2>Arkadaş ekle veya takip et, böylece onların gönderilerini görebilirsin.</h1>
+                            <p> tıkla <a href="http://127.0.0.1/CHAT/search.php" class="link" style="color: rgb(66, 219, 66)">here</a> to go to the search page</p>
                         </div>
                     <?php } else { 
                         foreach($posts as $post) {

@@ -54,9 +54,7 @@
                 
                 <p class="regular-text green-text" style="margin: 6px 0 8px 6px">Profil</p>
                 <div id="menu-profile-container" class="relative">
-                    <div class="absolute header-profile-edit-container">
-                        <a href="" class="button-style-4 header-profile-edit-button">Edit</a>
-                    </div>
+                   
                     <div class="cover-container">
                         <img src="<?php echo $user_cover; ?>" class="cover-photo" alt="">
                     </div>

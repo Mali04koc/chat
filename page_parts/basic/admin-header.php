@@ -1,4 +1,3 @@
-
 <?php
     use classes\{Config, Token, Session, Common, Redirect};
     use models\{UserRelation, User, Message};
@@ -14,6 +13,22 @@
 ?>
 
 <header>
+    <style>
+    .horizontal-menu-item-wrapper {
+            color: white !important;
+        }
+
+        .account-user {
+            color: white !important;
+        }
+
+        #top-header .header-menu {
+            color: white !important;
+        }
+        .sub-options-container-style-1 .message-content-container p {
+          color: #232323 !important;
+     }
+        </style>
     <div id="top-header">
         <div id="header-logo-container">
            
@@ -56,7 +71,7 @@
                                     </div>
                                 </div>
                             <div class="options-separator-style-1"></div>
-                            <a href="<?php echo $setting_path; ?>" class="sub-option">
+                            <a href="<?php echo $setting_path; ?>" class="sub-option" style="text-decoration: none; color: inherit;">
                                 <div class="row-v-flex">
                                     <div>
                                         <img src="<?php echo Config::get("root/path") . "public/assets/images/icons/settings.png" ?>" class="image-style-2" alt="user's profile picture">
@@ -85,6 +100,7 @@
                                         echo Token::generate("logout");
                                     }
                                 ?>">
+                                <input type="hidden" name="logout" value="1">
                             </form>
                         </div>
                     </div>

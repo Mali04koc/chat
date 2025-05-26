@@ -2,13 +2,29 @@
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
+require_once "classes/middleware.php";
+
 
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{Post, User, Comment, Like};
 
+$middleware = new \classes\AuthMiddleware();
+$middleware->handle();
+
+// Start output buffering
+ob_start();
+
 // Check if user is logged in and is an admin
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
+}
+
+// Handle logout
+if(isset($_POST["logout"])) {
+    if(Token::check(Common::getInput($_POST, "token_logout"), "logout")) {
+        $user->logout();
+        Redirect::to("login/login.php");
+    }
 }
 
 // Get search parameters
@@ -135,7 +151,7 @@ function getMediaContent($post) {
             foreach ($files as $file) {
                 if (in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                     $content .= '<div class="post-media">';
-                    $content .= '<img src="' . htmlspecialchars($file) . '" alt="Post image" class="post-image">';
+                    $content .= '<img src="' . htmlspecialchars($file) . '" alt="Gönderi görseli" class="post-image">';
                     $content .= '</div>';
                 }
             }
@@ -152,7 +168,7 @@ function getMediaContent($post) {
                     $content .= '<div class="post-media">';
                     $content .= '<video controls class="post-video">';
                     $content .= '<source src="' . htmlspecialchars($file) . '" type="video/' . pathinfo($file, PATHINFO_EXTENSION) . '">';
-                    $content .= 'Your browser does not support the video tag.';
+                    $content .= 'Tarayıcınız video etiketini desteklemiyor.';
                     $content .= '</video>';
                     $content .= '</div>';
                 }
@@ -185,19 +201,30 @@ function getPostLikes($post_id) {
     return $db->results();
 }
 
+// All PHP logic should be here, before any HTML output
 ?>
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEW WORLD - GÖNDERİ YÖNETİMİ</title>
+    <title>NEW WORLD-GÖNDERİ YÖNETİMİ</title>
     <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.png' />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="public/css/global.css">
     <link rel="stylesheet" href="public/css/header.css">
+    <link rel="stylesheet" href="public/css/index.css">
+    <link rel="stylesheet" href="public/css/create-post-style.css">
+    <link rel="stylesheet" href="public/css/master-left-panel.css">
+    <link rel="stylesheet" href="public/css/master-right-contacts.css">
+    <link rel="stylesheet" href="public/css/post.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="public/javascript/config.js" defer></script>
+    <script src="public/javascript/index.js" defer></script>
+    <script src="public/javascript/global.js" defer></script>
+    <script src="public/javascript/master-right.js" defer></script>
+    <script src="public/javascript/post.js" defer></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -518,6 +545,7 @@ function getPostLikes($post_id) {
 </head>
 <body>
 <?php include_once "page_parts/basic/admin-header.php"; ?>
+
 
 <main class="container py-4">
     <h1 class="mb-4 page-title">Gönderi Yönetimi</h1>
