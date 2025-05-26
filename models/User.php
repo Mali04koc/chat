@@ -320,6 +320,7 @@ class User implements \JsonSerializable {
                 if($i==0)
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     $query .= "WHERE (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') AND user_type != 2 ";
                 else
                     $query .= "OR (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
@@ -327,6 +328,11 @@ class User implements \JsonSerializable {
             // Eğer birden fazla anahtar kelime varsa, sonrasında eklenen OR'lar için de adminleri hariç tutmak için AND user_type != 2 eklenmeli
             if(count($keywords) > 1) {
                 $query .= " AND user_type != 2";
+=======
+                    $query .= "AND (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
+                else
+                    $query .= "OR (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
+>>>>>>> Stashed changes
 =======
                     $query .= "AND (username LIKE '%$k%' OR firstname LIKE '%$k%' OR lastname LIKE '%$k%') ";
                 else
