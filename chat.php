@@ -1,9 +1,8 @@
+
 <?php
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
-require_once "classes/middleware.php";
-
 
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{Post, UserRelation, Follow, Message, User};
@@ -11,8 +10,6 @@ use layouts\post\Post as Post_View;
 use layouts\chat\ChatComponent;
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
-$middleware = new \classes\AuthMiddleware();
-$middleware->handle();
 
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
@@ -32,8 +29,8 @@ $current_user_id = $user->getPropertyValue("id");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOHBET</title>
-    <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.png' />
+    <title>V01D47</title>
+    <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.ico' />
     <link rel="stylesheet" href="public/css/global.css">
     <link rel="stylesheet" href="public/css/header.css">
     <link rel="stylesheet" href="public/css/chat.css">
@@ -64,7 +61,7 @@ $current_user_id = $user->getPropertyValue("id");
                     
                     </div>
                     <div class="friends-chat-search-container">
-                        <div class="section-title">Konuşmalar: </div>
+                        <div class="section-title">Discussions: </div>
 
                         <div style="margin-left: auto">
                             <a href="" class="menu-button-style-3 refresh-button refresh-discussion"></a>
@@ -110,8 +107,8 @@ $current_user_id = $user->getPropertyValue("id");
                         ?>
                     </div>
                     <div class="friends-chat-search-container" style="border-right: none;">
-                        <div class="section-title">Arkadaşlar: </div>
-                        <input type="text" class="chat-input-style friend-search-input search-back white-search" placeholder="Arkadaş ara (kullanıcı adı) ..">
+                        <div class="section-title">Friends: </div>
+                        <input type="text" class="chat-input-style friend-search-input search-back white-search" placeholder="Search for a friend (username) ..">
                     </div>
                     <div id="friends-chat-container" class="relative">
                         <?php
@@ -127,9 +124,9 @@ $current_user_id = $user->getPropertyValue("id");
                 </div>
                 <div id="no-discussion-yet">
                     <div class="flex-justify-column" style="text-align: center">
-                        <h2>Henüz bir mesaj seçilmedi</h2>
-                        <p class="regular-text">Mevcut mesajlarınızdan birini seçin veya yeni bir mesaj başlatın.</p>
-                        <a href="" class="new-message-button">Yeni Mesaj</a>
+                        <h2>You don't have a message selected</h2>
+                        <p class="regular-text">Choose one from your existing messages, or start a new one.</p>
+                        <a href="" class="new-message-button">New Message</a>
                     </div>
                 </div>
             </div>

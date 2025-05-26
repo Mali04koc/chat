@@ -2,17 +2,12 @@
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
-require_once "classes/middleware.php";
-
 
 use classes\{DB, Validation, Hash, Common, Session, Token, Redirect};
 use models\User;
 
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
-$middleware = new \classes\AuthMiddleware();
-$middleware->handle();
-
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
 }
@@ -107,7 +102,7 @@ if(isset($_POST["save-changes"])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NEW WORLD</title>
+<title>V01D47</title>
 <link rel='shortcut icon' type='image/x-icon' href='public/assets/images/favicons/favicon.ico'/>
 <link rel="stylesheet" href="public/css/global.css">
 <link rel="stylesheet" href="public/css/settings.css">
@@ -151,25 +146,25 @@ if(isset($_POST["save-changes"])) {
                     </script>
                 </div>
                 <div class="flex-column">
-                    <label for="email" class="setting-label1">E-mail Adresi<span class="red-label">*</span></label>
+                    <label for="email" class="setting-label1">E-mail address<span class="red-label">*</span></label>
                     <input type="text" form="save-form" class="setting-input-text-style" autocomplete="off" value="<?php echo $email; ?>" name="email" id="email">
                 </div>
                 <div class="flex-column">
-                    <label for="password" class="setting-label1">Eski Şifre<span class="red-label">*</span></label>
+                    <label for="password" class="setting-label1">Current password<span class="red-label">*</span></label>
                     <input type="password" form="save-form" class="setting-input-text-style" name="password" id="password">
                 </div>
                 <div class="flex-column">
-                    <label for="new-password" class="setting-label1">Yeni Şifre</label>
+                    <label for="new-password" class="setting-label1">New password</label>
                     <input type="password" form="save-form" class="setting-input-text-style" name="new-password" id="new-password">
                 </div>
                 <div class="flex-column">
-                    <label for="new-password-again" class="setting-label1">Yeni Şifreyi Onayla</label>
+                    <label for="new-password-again" class="setting-label1">Confirm new password</label>
                     <input type="password" form="save-form" class="setting-input-text-style" name="new-password-again" id="new-password-again">
                 </div>
                 
                 <form action="" method="POST" id="save-form" enctype="multipart/form-data">
                     <input type="hidden" name="token_save_changes" value="<?php echo Token::generate("saveEdits"); ?>">
-                    <input type="submit" value="DEĞİŞİKLİKLERİ KAYDET" name="save-changes" id="save-button">
+                    <input type="submit" value="SAVE CHANGES" name="save-changes" id="save-button">
                 </form>
             </div>
         </div>

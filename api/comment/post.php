@@ -19,28 +19,28 @@ require_once "../../functions/sanitize_text.php";
 
 if(!isset($_POST["post_id"])) {
     echo json_encode(array(
-        "message"=>"Gönderi ID'si gerekli!",
+        "message"=>"post id required !",
         "success"=>false
     ));
 }
 
 if(!isset($_POST["current_user_id"])) {
     echo json_encode(array(
-        "message"=>"Mevcut kullanıcı ID'si gerekli!",
+        "message"=>"Current user id required !",
         "success"=>false
     ));
 }
 
 if(!isset($_POST["comment_owner"])) {
     echo json_encode(array(
-        "message"=>"Yorum sahibi gerekli!",
+        "message"=>"comment owner required !",
         "success"=>false
     ));
 }
 
 if(!isset($_POST["comment_owner"]) || empty($_POST["comment_owner"])) {
     echo json_encode(array(
-        "message"=>"Yorum boş veya tanımsız olamaz!",
+        "message"=>"comment should not be empty or unset !",
         "success"=>false
     ));
 }

@@ -1,81 +1,88 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+    require_once "C:/xampp/htdocs/chat/vendor/autoload.php";;
+    require_once "C:/xampp/htdocs/chat/core/init.php";
 
-require_once "C:/xampp/htdocs/chat/vendor/autoload.php";;
-require_once "C:/xampp/htdocs/chat/core/init.php";
+    use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect};
+    use models\User;
 
-use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect};
-use models\User;
-
-if(isset($_POST["register"])) {
-    $validate = new Validation();
-    if(Token::check(Common::getInput($_POST, "token_reg"), "register")) {
-        $validate->check($_POST, array(
-            "firstname"=>array(
-                "name"=>"Firstname",
-                "min"=>2,
-                "max"=>50
-            ),
-            "lastname"=>array(
-                "name"=>"Lastname",
-                "min"=>2,
-                "max"=>50
-            ),
-            "username"=>array(
-                "name"=>"Username",
-                "required"=>true,
-                "min"=>6,
-                "max"=>20,
-                "unique"=>true
-            ),
-            "email"=>array(
-                "name"=>"Email",
-                "required"=>true,
-                "email-or-username"=>true
-            ),
-            "password"=>array(
-                "name"=>"Password",
-                "required"=>true,
-                "min"=>6
-            ),
-            "password_again"=>array(
-                "name"=>"Repeated password",
-                "required"=>true,
-                "matches"=>"password"
-            ),
-        ));
-        if($validate->passed()) {
-            $salt = Hash::salt(16);
-            $user = new User();
-            $user->setData(array(
-                "firstname"=>Common::getInput($_POST, "firstname"),
-                "lastname"=>Common::getInput($_POST, "lastname"),
-                "username"=>Common::getInput($_POST, "username"),
-                "email"=>Common::getInput($_POST, "email"),
-                "password"=> Hash::make(Common::getInput($_POST, "password"), $salt),
-                "salt"=>$salt,
-                "joined"=> date("Y/m/d h:i:s"),
-                "user_type"=>1,
-                "cover"=>'',
-                "picture"=>'',
-                "private"=>-1
+     if(isset($_POST["register"])) {
+        $validate = new Validation();
+        if(Token::check(Common::getInput($_POST, "token_reg"), "register")) {
+            $validate->check($_POST, array(
+                "firstname"=>array(
+                    "name"=>"Firstname",
+                    "min"=>2,
+                    "max"=>50
+                ),
+                "lastname"=>array(
+                    "name"=>"Lastname",
+                    "min"=>2,
+                    "max"=>50
+                ),
+                "username"=>array(
+                    "name"=>"Username",
+                    "required"=>true,
+                    "min"=>6,
+                    "max"=>20,
+                    "unique"=>true
+                ),
+                "email"=>array(
+                    "name"=>"Email",
+                    "required"=>true,
+                    "email-or-username"=>true
+                ),
+                "password"=>array(
+                    "name"=>"Password",
+                    "required"=>true,
+                    "min"=>6
+                ),
+                "password_again"=>array(
+                    "name"=>"Repeated password",
+                    "required"=>true,
+                    "matches"=>"password"
+                ),
             ));
-            if($user->add()) {
+    
+            if($validate->passed()) {
+                $salt = Hash::salt(16);
+    
+                $user = new User();
+                $user->setData(array(
+                    "firstname"=>Common::getInput($_POST, "firstname"),
+                    "lastname"=>Common::getInput($_POST, "lastname"),
+                    "username"=>Common::getInput($_POST, "username"),
+                    "email"=>Common::getInput($_POST, "email"),
+                    "password"=> Hash::make(Common::getInput($_POST, "password"), $salt),
+                    "salt"=>$salt,
+                    "joined"=> date("Y/m/d h:i:s"),
+                    "user_type"=>1,
+                    "cover"=>'',
+                    "picture"=>'',
+                    "private"=>-1
+                ));
+                $user->add();
+                
+                mkdir("../data/users/" . Common::getInput($_POST, "username")."/");
+                mkdir("../data/users/" . Common::getInput($_POST, "username")."/posts/");
+                mkdir("../data/users/" . Common::getInput($_POST, "username")."/media/");
+                mkdir("../data/users/" . Common::getInput($_POST, "username")."/media/pictures/");
+                mkdir("../data/users/" . Common::getInput($_POST, "username")."/media/covers/");
+
                 $reg_success_message = "Hesabın başarıyla oluşturuldu. Şimdi giriş yapabilirsin.";
+                /* The following flash will be shown in the index page if the user is new, and we'll also check if the user registered 
+                is the same person log in because the user could create a new account but login with other account, in that case we won't
+                show any welcome message*/
+                 
+                
                 Session::flash("register_success", "New World'e hoş geldin " . Common::getInput($_POST, "firstname") . " " . Common::getInput($_POST, "lastname") . "!");
                 Session::flash("new_username", Common::getInput($_POST, "username"));
+
+                 
             } else {
-                $login_failure_message = "Veritabanına kullanıcı eklenirken bir hata oluştu.";
+                $login_failure_message = $validate->errors()[0];
             }
-        } else {
-            $login_failure_message = $validate->errors()[0];
         }
-    } else {
-        $login_failure_message = "Token doğrulaması başarısız oldu.";
     }
-}
 ?>
 
 
@@ -107,12 +114,6 @@ if(isset($_POST["register"])) {
            <?php  if (isset($reg_success_message)): ?>
                         <div class="error-message"> 
                             <?php echo $reg_success_message; ?>
-                        </div>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($login_failure_message)): ?>
-                        <div class="error-message" style="color: red;">
-                            <?php echo $login_failure_message; ?>
                         </div>
                     <?php endif; ?>
                   
@@ -148,8 +149,6 @@ if(isset($_POST["register"])) {
             <input type="hidden" name="token_reg" value="<?php echo Token::generate("register"); ?>">
 
             <button type="submit"  name="register" >Kayıt</button>
-            <a href="../Login/login.php" class="icon">
-            <ion-icon name="home-outline"></ion-icon>
         </form>
     </div>
 

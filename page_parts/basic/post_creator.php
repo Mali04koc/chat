@@ -4,7 +4,7 @@
 
 <div class="create-post-container">
     <div class="post-created-message">
-        <p>Gönderi başarıyla paylaşıldı ve gönderilerine <span id="post-creation-place">eklendi.</span>.</p>
+        <p>Gönderi başarıyla paylaşıldı ve zaman çizelgene <span id="post-creation-place">eklendi.</span>.</p>
     </div>
     <div class="flex-space create-post-header">
         <div class="row-v-flex">
@@ -24,6 +24,7 @@
                             <input type="radio" checked name="post-place" form="create-post-form" value="1" class="flex rad-opt">
                         </div>
                         <div class="sub-option-style-2 post-to-option">
+                            <label for="" class="flex padding-back-style-1 group-back">Gruplar</label>
                             <div class="flex-row-column">
                                 <input type="radio" disabled name="post-place" form="create-post-form" value="2" class="flex rad-opt">
                                 <div href="" class="button-more-style-1">></div>
@@ -64,7 +65,7 @@
         </div>
     </div>
     <div>
-        <textarea name="post-textual-content" form="create-post-form" id="create-post-textual-content" class="textarea-style-2" placeholder="Yeni Dünyanda Neler Var ?"></textarea>
+        <textarea name="post-textual-content" form="create-post-form" id="create-post-textual-content" class="textarea-style-2" placeholder="What's on your mind .."></textarea>
     </div>
     <div class="post-assets-uploaded-container">
         
@@ -90,7 +91,7 @@
                         echo Token::generate("share-post");
                     }
             ?>">
-            <input type="submit" name="share-post-button" value="Gönder" class="button-style-7 share-post">
+            <input type="submit" name="share-post-button" value="POST" class="button-style-7 share-post">
         </form>
     </div>
 </div>

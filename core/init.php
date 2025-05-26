@@ -75,18 +75,11 @@ if(Cookie::exists(Config::get("remember/cookie_name")) && !Session::exists(Confi
         }
 }
 
-// admin panelinde kullanıcı aktif mi yoksa değil mi olduğunu görmek için anlık olarak aktiflik durumunu güncelliyoruz
 if($user->getPropertyValue("isLoggedIn")) {
     $user->update_active();
 }
 
-if (isset($user) && $user->getPropertyValue("isLoggedIn")) {
-    $db = DB::getInstance();
-    $db->query(
-        "UPDATE user_info SET last_active_update = ? WHERE id = ?",
-        [date('Y-m-d H:i:s'), $user->getPropertyValue('id')]
-    );
-}
+
 
 /*
 

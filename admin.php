@@ -1,9 +1,8 @@
+
 <?php
 
     require_once "vendor/autoload.php";
     require_once "core/init.php";
-    require_once "classes/middleware.php";
-
 
     use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
     use models\{Post, UserRelation, Follow};
@@ -12,9 +11,6 @@
 
     // user nesnesini init.phpde oluşturduk
     // Aşağıdaki kod sayesinde kullanıcı giriş yapmadan üstten url ile sitede dolaşmasını engelliyoruz.Giriş sayfasına yönlendiriyoruz
-   $middleware = new \classes\AuthMiddleware();
-   $middleware->handle();
-   
     if(!$user->getPropertyValue("isLoggedIn")) {
         Redirect::to("login/login.php");
     }
@@ -51,67 +47,11 @@
 <body>
     <?php include_once "page_parts/basic/admin-header.php"; ?>
     <main>
- <?php if (\classes\Session::exists('danger')): ?>
-                    <div class="alert-box">
-                        <div class="alert alert-danger">
-                            <?php echo \classes\Session::flash('danger'); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-                <script>
-                    setTimeout(function() {
-                        var alertBox = document.querySelector('.alert-box');
-                        if(alertBox){
-                            alertBox.style.transition = "opacity 0.5s";
-                            alertBox.style.opacity = 0;
-                            setTimeout(function() {
-                                if(alertBox.parentNode) alertBox.parentNode.removeChild(alertBox);
-                            }, 500);
-                        }
-                    }, 3000); // 5000 ms = 5 saniye
-                </script>
-                <style>
-            .alert-box {
-                position: fixed;
-                top: 70px;
-                left: 50%;
-                transform: translateX(-50%);
-                z-index: 1;
-                width: 90%;
-                max-width: 400px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-                animation: slideDown 0.5s ease;
-            }
-
-            .alert {
-                padding: 18px 24px;
-                border-radius: 8px;
-                font-size: 1.1rem;
-                font-weight: 500;
-                text-align: center;
-                margin-bottom: 0;
-                border: 1.5px solid #f5c6cb;
-                background: linear-gradient(90deg, #f8d7da 80%, #fff 100%);
-                color: #721c24;
-                letter-spacing: 0.5px;
-            }
-
-            @keyframes slideDown {
-                0% {
-                    opacity: 0;
-                    transform: translate(-50%, -40px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translate(-50%, 0);
-                }
-            }
-                </style>
 
         <div id="global-container" class="relative">
             <div class="post-viewer-only">
                 <div class="viewer-post-wrapper">
-                    <img src="" class="post-view-image" alt="Gönderi Görüntüsü">
+                    <img src="" class="post-view-image" alt="">
                     <div class="close-view-post"></div>
                 </div>
             </div>

@@ -2,8 +2,6 @@
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
-require_once "classes/middleware.php";
-
 
 use classes\{DB, Validation, Common, Session, Token, Redirect, Hash};
 
@@ -11,10 +9,6 @@ error_reporting();
 
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
-
-$middleware = new \classes\AuthMiddleware();
-$middleware->handle();
-
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
 }
@@ -172,7 +166,7 @@ if(isset($_POST["save-changes"])) {
                     $new_target = 'data/users/' . $new_username . "/media/covers/" . $generatedName . $original_extension;
                     $user->setPropertyValue("cover", $new_target);
                 } else {
-                    $validator->addError("Üzgünüz, kapak fotoğrafınız yüklenirken bir hata oluştu.");
+                    $validator->addError("Sorry, there was an error while uploading your cover picture.");
                 }
             }
             if(file_exists($_FILES['avatar']['tmp_name']) && is_uploaded_file($_FILES['avatar']['tmp_name'])) {
@@ -194,7 +188,7 @@ if(isset($_POST["save-changes"])) {
                     $new_target = 'data/users/' . $new_username . "/media/pictures/" . $generatedName . $original_extension;
                     $user->setPropertyValue("picture", $new_target);
                 } else {
-                    $validator->addError("Üzgünüz, profil fotoğrafınız yüklenirken bir hata oluştu.");
+                    $validator->addError("Sorry, there was an error while uploading your avatar picture.");
                 }
             }
 
@@ -248,18 +242,9 @@ if(isset($_POST["save-changes"])) {
             $private = $new_private;
             $user_metadata = $new_user_metadata;
         } else {
-            echo '<div class="alert-box"><div class="alert alert-danger">';
             foreach($validator->errors() as $error) {
-                echo htmlspecialchars($error) . "<br>";
+                echo $error . "<br>";
             }
-            // Dosya yükleme hatalarını da ekle
-            if (isset($_FILES['cover']) && $_FILES['cover']['error'] !== UPLOAD_ERR_OK && $_FILES['cover']['error'] !== UPLOAD_ERR_NO_FILE) {
-                echo "Cover yüklenirken hata oluştu: " . $_FILES['cover']['error'] . "<br>";
-            }
-            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] !== UPLOAD_ERR_OK && $_FILES['avatar']['error'] !== UPLOAD_ERR_NO_FILE) {
-                echo "Avatar yüklenirken hata oluştu: " . $_FILES['avatar']['error'] . "<br>";
-            }
-            echo '</div></div>';
         }
     }
 }
@@ -331,7 +316,7 @@ function recurse_copy($src,$dst) {
                     <input type="text" form="save-form" class="setting-input-text-style" value="<?php echo $fullname; ?>" name="full-name" id="fullname">
                 </div>
                 <div class="flex-column">
-                    <label for="bio" class="setting-label1">Biyografi</label>
+                    <label for="bio" class="setting-label1">Bio</label>
                     <textarea form="save-form" spellcheck="false" name="bio" id="bio" class="setting-input-text-style textarea-style"><?php echo $bio; ?></textarea>
                 </div>
                 <div id="profile-asset-wrapper" class="flex">
@@ -361,7 +346,11 @@ function recurse_copy($src,$dst) {
                             <p class="no-margin input-hint">PNG, JPG, JPEG veya GIF. En fazla 5 MB. 400x400px boyutuna getirilecek.</p>
                         </div>
                         <div style="margin-top: 10px">
-                          
+                            <label for="avatar-input" class="setting-label" style="font-size: 16px; margin-bottom: 5px">Gizli Hesap</label>
+                            <div class="flex">
+                                <div class="toggle-button-style-2" id="private-account-button"></div>
+                                <div id="private-account-status">(OFF)</div>
+                            </div>
                             <input name="private" form="save-form" value="<?php echo $private; ?>" id="private-account-state" type="hidden">
                         </div>
                     </div>
@@ -370,28 +359,28 @@ function recurse_copy($src,$dst) {
                     <label for="fullname" class="setting-label1">Profil Bilgileri</label>
                     <p class="input-hint">6 farklı özelliğin profilinde gösterilir.</p>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["label"] ?>" placeholder="Başlık" name="label1" id="label1">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["content"] ?>" placeholder="İçerik" name="content1" id="content1">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["label"] ?>" placeholder="Label" name="label1" id="label1">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[0]["content"] ?>" placeholder="Content" name="content1" id="content1">
                     </div>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["label"] ?>" placeholder="Başlık" name="label2" id="label2">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["content"] ?>" placeholder="İçerik" name="content2" id="content2">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["label"] ?>" placeholder="Label" name="label2" id="label2">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[1]["content"] ?>" placeholder="Content" name="content2" id="content2">
                     </div>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["label"] ?>" placeholder="Başlık" name="label3" id="label3">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["content"] ?>" placeholder="İçerik" name="content3" id="content3">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["label"] ?>" placeholder="Label" name="label3" id="label3">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[2]["content"] ?>" placeholder="Content" name="content3" id="content3">
                     </div>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["label"] ?>" placeholder="Başlık" name="label4" id="label4">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["content"] ?>" placeholder="İçerik" name="content4" id="content4">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["label"] ?>" placeholder="Label" name="label4" id="label4">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[3]["content"] ?>" placeholder="Content" name="content4" id="content4">
                     </div>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["label"] ?>" placeholder="Başlık" name="label5" id="label5">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["content"] ?>" placeholder="İçerik" name="content5" id="content5">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["label"] ?>" placeholder="Label" name="label5" id="label5">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[4]["content"] ?>" placeholder="Content" name="content5" id="content5">
                     </div>
                     <div class="flex">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["label"] ?>" placeholder="Başlık" name="label6" id="label6">
-                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["content"] ?>" placeholder="İçerik" name="content6" id="content6">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["label"] ?>" placeholder="Label" name="label6" id="label6">
+                        <input type="text" form="save-form" class="setting-input-text-style meta-data-input" value="<?php echo $user_metadata[5]["content"] ?>" placeholder="Content" name="content6" id="content6">
                     </div>
                 </div>
 

@@ -1,16 +1,12 @@
 <?php
     require_once "vendor/autoload.php";
     require_once "core/init.php";
-    require_once "classes/middleware.php";
-
 
     use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
     use models\User;
     use layouts\search\Search;
     // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
     // Here we check if the user is not logged in and we redirect him to login page
-    $middleware = new \classes\AuthMiddleware();
-    $middleware->handle();
 
     if(!$user->getPropertyValue("isLoggedIn")) {
         Redirect::to("login/login.php");
@@ -84,7 +80,7 @@
                     <div style="padding: 8px">
                         <div class="flex-space">
                             <h1 class="title-style-4">Aramalar</h1>
-                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">daha fazla gör</a>
+                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">see more</a>
                         </div>
                         <p class="label-style-2">Sonuç <span>
                             <?php echo ($number_of_users > $showingNumber) ? $showingNumber : $number_of_users; ?>
@@ -108,10 +104,10 @@
                 <div class="search-result-type-container">
                     <div style="padding: 8px">
                         <div class="flex-space">
-                            <h1 class="title-style-4">Gruplar</h1>
-                            <a href="" class="link-style-2">daha fazla gör</a>
+                            <h1 class="title-style-4">Groups</h1>
+                            <a href="" class="link-style-2">see more</a>
                         </div>
-                        <p class="label-style-2">Sonuç <span>4</span> / <span>7</span> gösteriliyor</p>
+                        <p class="label-style-2">Showing <span>4</span> of <span>7</span> results</p>
                     </div>
                     <div class="search-result">
                         <?php

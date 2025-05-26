@@ -1,3 +1,4 @@
+
 <?php
 
 require_once "vendor/autoload.php";
@@ -160,7 +161,7 @@ foreach (scandir($directory) as $file) {
 <?php include_once "page_parts/basic/header.php"; ?>
 <main>
     <div class="notification-bottom-container">
-        <p class="notification-bottom-sentence">BU BİR TEST</p>
+        <p class="notification-bottom-sentence">THIS IS TEST</p>
     </div>
     <?php // Redirect to Post not found page ?>
     <div id="post-viewer" class="post-item">
@@ -201,13 +202,13 @@ foreach (scandir($directory) as $file) {
                     <div class="sub-options-container sub-options-container-style-2">
                         <div class="options-container-style-1">
                             <div class="sub-option-style-2 save-post-button">
-                                <p for="" class="regular-text margintb4 padding-back-style-1 save-back">Gönderiyi kaydet</p>
+                                <p for="" class="regular-text margintb4 padding-back-style-1 save-back">Save post</p>
                             </div>
                             <div class="sub-option-style-2 download-post-button">
-                                <p for="" class="regular-text margintb4 padding-back-style-1 download-back">İndir</p>
+                                <p for="" class="regular-text margintb4 padding-back-style-1 download-back">Download</p>
                             </div>
                             <div class="sub-option-style-2 full-screen-post">
-                                <p for="" class="regular-text margintb4 padding-back-style-1 full-screen-black-back">Tam ekran</p>
+                                <p for="" class="regular-text margintb4 padding-back-style-1 full-screen-black-back">Enter full-screen</p>
                             </div>
                         </div>
                     </div>
@@ -228,8 +229,8 @@ foreach (scandir($directory) as $file) {
                     <p class="regular-text-style-2 bold like-counter"><?php echo $likes_count; ?></p>
                 </div>
                 <div class="right-pos-margin flex">
-                    <div style="margin-right: 6px" class="pointer hover-underline <?php echo $ce ?> noc-container"><span class="num-of-comments regular-text"><?php echo $pmc ?></span>Yorumlar</div>
-                    <div class="pointer hover-underline nos-container <?php echo $se ?>"><span class="num-of-shares regular-text"><?php echo $shares; ?></span>Paylaşımlar</div>
+                    <div style="margin-right: 6px" class="pointer hover-underline <?php echo $ce ?> noc-container"><span class="num-of-comments regular-text"><?php echo $pmc ?></span>Comments</div>
+                    <div class="pointer hover-underline nos-container <?php echo $se ?>"><span class="num-of-shares regular-text"><?php echo $shares; ?></span>shares</div>
                 </div>
             </div>
             <div class="reaction-box">
@@ -266,7 +267,7 @@ foreach (scandir($directory) as $file) {
                     </div>
                     <div class="comment-input-form-wrapper">
                         <form action="" method="POST" class="comment-form relative">
-                            <input type="text" name="comment" placeholder="Yorum yaz" autocomplete="off" class="comment-input-style comment-inp">
+                            <input type="text" name="comment" placeholder="Write a comment .." autocomplete="off" class="comment-input-style comment-inp">
                         </form>
                     </div>
                 </div>

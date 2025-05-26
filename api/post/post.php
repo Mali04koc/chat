@@ -126,7 +126,7 @@ if(Token::check(Common::getInput($_POST, "token_post"), "share-post")) {
                                 per post so we just save the picture directory so that we can fetch all images
                             */
                         } else {
-                            $validator->addError("Üzgünüz, gönderi görseliniz yüklenirken bir hata oluştu.");
+                            $validator->addError("Sorry, there was an error uploading your post picture.");
                         }
                     }
                 }
@@ -134,7 +134,7 @@ if(Token::check(Common::getInput($_POST, "token_post"), "share-post")) {
                 $post->add();
             } else {
                 // Print error or store it in a variable to sown later, then return false
-                $validator->addError("Üzgünüz, gönderi sahibi mevcut değil!");
+                $validator->addError("Sorry, the poster doesn not exist !");
             }
         } else {
 

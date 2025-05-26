@@ -45,12 +45,20 @@
                     <span style="font-size: 16px; font-weight: 500;">Gönderiler</span>
                 </a>
 
-                <a href="<?php echo Config::get('root/path') . 'admin-activity.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
+                <a href="<?php echo Config::get('root/path') . 'admin.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
                     <ion-icon name="refresh-outline" style="font-size: 20px; margin-right: 8px; color: #ffffff;"></ion-icon>
                     <span style="font-size: 16px; font-weight: 500;">Aktiflik Saatleri</span>
                 </a>
 
-             
+                <a href="<?php echo Config::get('root/path') . 'admin.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
+                    <ion-icon name="camera-outline" style="font-size: 20px; margin-right: 8px; color: #ffffff;"></ion-icon>
+                    <span style="font-size: 16px; font-weight: 500;">Profil Resimleri</span>
+                </a>
+
+                <a href="<?php echo Config::get('root/path') . 'admin.php'; ?>" style="display: flex; align-items: center; text-decoration: none; color: #ffffff; padding: 12px 8px; border-radius: 8px; transition: background-color 0.3s ease; margin-bottom: 12px;">
+                    <ion-icon name="ellipsis-horizontal-outline" style="font-size: 20px; margin-right: 8px; color: #ffffff;"></ion-icon>
+                    <span style="font-size: 16px; font-weight: 500;">Yorumlar</span>
+                </a>
             </div>
 
 

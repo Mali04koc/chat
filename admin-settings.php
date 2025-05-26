@@ -2,8 +2,6 @@
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
-require_once "classes/middleware.php";
-
 
 use classes\{DB, Validation, Common, Session, Token, Redirect, Hash};
 
@@ -11,10 +9,6 @@ error_reporting();
 
 // DONT'T FORGET $user OBJECT IS DECLARED WITHIN INIT.PHP (REALLY IMPORTANT TO SEE TO SEE [IMPORTANT#4]
 // Here we check if the user is not logged in and we redirect him to login page
-
-$middleware = new \classes\AuthMiddleware();
-$middleware->handle();
-
 if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
 }
@@ -125,7 +119,7 @@ if(isset($_POST["save-changes"])) {
                     $new_target = 'data/users/' . $new_username . "/media/covers/" . $generatedName . $original_extension;
                     $user->setPropertyValue("cover", $new_target);
                 } else {
-                    $validator->addError("Üzgünüz, kapak fotoğrafınız yüklenirken bir hata oluştu.");
+                    $validator->addError("Sorry, there was an error while uploading your cover picture.");
                 }
             }
             if(file_exists($_FILES['avatar']['tmp_name']) && is_uploaded_file($_FILES['avatar']['tmp_name'])) {
@@ -147,7 +141,7 @@ if(isset($_POST["save-changes"])) {
                     $new_target = 'data/users/' . $new_username . "/media/pictures/" . $generatedName . $original_extension;
                     $user->setPropertyValue("picture", $new_target);
                 } else {
-                    $validator->addError("Üzgünüz, profil fotoğrafınız yüklenirken bir hata oluştu.");
+                    $validator->addError("Sorry, there was an error while uploading your avatar picture.");
                 }
             }
 

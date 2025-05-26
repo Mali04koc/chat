@@ -1,3 +1,4 @@
+
 <?php
     use classes\{Config, Token, Session, Common, Redirect};
     use models\{UserRelation, User, Message};
@@ -64,14 +65,14 @@ RNC;
                 <img src="$sender_avatar" class="image-style-1" alt="user's profile picture">
             </div>
             <div class="friend-request-content-container">
-                <p class="notif-content"><span class="action-doer">$sender_username</span> <span class="notif-action">sana</span> <span> arkadaşlık isteği gönderdi.</span></p>
+                <p class="notif-content"><span class="action-doer">$sender_username</span> <span class="notif-action">sends</span> <span> you a friend request</span></p>
                 <p class="notif-date">$request_life</p>
             </div>
         </a>
         <div class="right-pos-margin flex">
             <div class="right-pos-margin">
-                <a href="" class="new-style-button accept-request">Kabul Et</a>
-                <a href="" class="new-style-button delete-request">Reddet</a>
+                <a href="" class="new-style-button accept-request">Accept</a>
+                <a href="" class="new-style-button delete-request">Delete</a>
                 <input type="hidden" value="$sender_id" class="uid">
             </div>
         </div>
@@ -158,23 +159,6 @@ MSG;
 
 
 <header>
-    <style>
-         .horizontal-menu-item-wrapper {
-            color: white !important;
-        }
-
-        .account-user {
-            color: white !important;
-        }
-
-        #top-header .header-menu {
-            color: white !important;
-        }
-        .sub-options-container-style-1 .message-content-container p {
-          color: #232323 !important;
-     }
-       
-    </style>
     <div id="top-header">
         <div id="header-logo-container">
             <!-- height of <a> should be like img height -->
@@ -193,7 +177,7 @@ MSG;
             <div class="row-v-flex header-menu">
 
                 <div class="horizontal-menu-item-wrapper">
-                    <a href="<?php echo Config::get("root/path") . "profile.php?username=" . $user->getPropertyValue("username");?>" id="user-profile-button" class="flex-row-column" style="text-decoration: none; color: white;">
+                    <a href="<?php echo Config::get("root/path") . "profile.php?username=" . $user->getPropertyValue("username");?>" id="user-profile-button" class="flex-row-column">
                         <div id="header-picture-container">
                             <img id="header-picture" src="<?php echo Config::get("root/path") . ($user->getPropertyValue("picture") != "" ? $user->getPropertyValue("picture") : "public/assets/images/icons/user.png"); ?>">
                         </div>

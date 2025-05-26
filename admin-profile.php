@@ -1,8 +1,8 @@
+
 <?php
 
 require_once "vendor/autoload.php";
 require_once "core/init.php";
-require_once 'functions/sanitize_text.php';
 
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect, Cookie};
 use models\{User, Post, Follow, UserRelation};
@@ -14,10 +14,104 @@ if(!$user->getPropertyValue("isLoggedIn")) {
     Redirect::to("login/login.php");
 }
 
+if(isset($_POST["save-profile-edites"])) {
+    if(Token::check(Common::getInput($_POST, "save_token"), "saveEdits")) {
+        $validate = new Validation();
+
+        $validate->check($_POST, array(
+            "firstname"=>array(
+                "name"=>"Firstname",
+                "required"=>true,
+                "min"=>4,
+                "max"=>40
+            ),
+            "lastname"=>array(
+                "name"=>"Lastname",
+                "required"=>true,
+                "min"=>4,
+                "max"=>40
+            ),
+            "private"=>array(
+                "name"=>"Profile (public/private)",
+                "range"=>array(-1, 1)
+            )
+        ));
+        
+        if(!empty($_FILES["picture"]["name"])) {
+            $validate->check($_FILES, array(
+                "picture"=>array(
+                    "name"=>"Picture",
+                    "image"=>"image"
+                )
+            ));
+        }
+
+        if(!empty($_FILES["cover"]["name"])) {
+            $validate->check($_FILES, array(
+                "cover"=>array(
+                    "name"=>"Cover",
+                    "image"=>"image"
+                )
+            ));
+        }
+
+        if($validate->passed()) {
+            // Set textual data
+            $user->setPropertyValue("firstname", $_POST["firstname"]);
+            $user->setPropertyValue("lastname", $_POST["lastname"]);
+            $user->setPropertyValue("bio", $_POST["bio"]);
+            $user->setPropertyValue("private", $_POST["private"]);
+
+            $profilePicturesDir = 'data/users/' . $user->getPropertyValue("username") . "/media/pictures/";
+            $coversDir = 'data/users/' . $user->getPropertyValue("username") . "/media/covers/";
+
+            // First we check if the user is changed the image
+            if(!empty($_FILES["picture"]["name"])) {
+                // If so we generate a unique hash to name the image
+                $generatedName = Hash::unique();
+                $generatedName = htmlspecialchars($generatedName);
+
+                // Then we fetch the image type t o concatenate it with the generated name
+                $file = $_FILES["picture"]["name"];
+                $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
+
+                $targetFile = $profilePicturesDir . $generatedName . $original_extension;
+                if (move_uploaded_file($_FILES["picture"]["tmp_name"], $targetFile)) {
+                    $user->setPropertyValue("picture", $targetFile);
+                } else {
+                    $validate->addError("Sorry, there was an error uploading your profile picture.");
+                }
+            }
+
+            if(!empty($_FILES["cover"]["name"])) {
+                $generatedName = Hash::unique();
+                $generatedName = htmlspecialchars($generatedName);
+                
+                $file = $_FILES["cover"]["name"];
+                $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
+
+                $targetFile = $coversDir . $generatedName . $original_extension;
+                if (move_uploaded_file($_FILES["cover"]["tmp_name"], $targetFile)) {
+                    $user->setPropertyValue("cover", $targetFile);
+                } else {
+                    $validate->addError("Sorry, there was an error uploading your profile picture.");
+                }
+            }
+
+            $user->update();
+        } else {
+            foreach($validate->errors() as $error) {
+                echo $error . "<br>";
+            }
+        }
+    }
+}
+
 $username = isset($_GET["username"]) ? trim(htmlspecialchars($_GET["username"])) : '';
 
 if(!($user->getPropertyValue("username") == $username) && $username != "") {
     $fetched_user = new User();
+    // If there's now user with the given username in the link it will redirect the user to 404 error page
     if($fetched_user->fetchUser("username", $username)) {
         $posts = Post::get("post_owner", $fetched_user->getPropertyValue("id"));
     } else {
@@ -76,7 +170,7 @@ $friends_number = UserRelation::get_friends_number($profile_user_id);
     <script src="public/javascript/post.js" defer></script>
 </head>
 <body>
-    <?php include_once "page_parts/basic/header.php"; ?>
+    <?php include_once "page_parts/basic/admin-header.php"; ?>
     <main class="relative">
         <div class="post-viewer-only">
             <div class="viewer-post-wrapper">

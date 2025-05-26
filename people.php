@@ -26,11 +26,7 @@
     $showingNumber = 4;
     
     $searchKeyword = isset($_GET["q"]) ? $_GET["q"] : '';
-<<<<<<< Updated upstream
     //oohjfgj
-=======
-    
->>>>>>> Stashed changes
     /*
     We perform search by comparing username,firstname and last name to every query string parameter and we get only users with username,firtname, or lastname
     that is like the data specified in the query string

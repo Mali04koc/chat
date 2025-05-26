@@ -28,10 +28,10 @@
             if($post->get_property("post_owner") == $user->getPropertyValue('id')) {
                 $post_owner_actions = <<<E
                     <div class="sub-option-style-2">
-                        <a href="" class="black-link delete-post">Gönderiyi Sil</a>
+                        <a href="" class="black-link delete-post">Delete post</a>
                     </div>
                     <div class="sub-option-style-2">
-                        <a href="" class="black-link edit-post">Gönderiyi Düzenle</a>
+                        <a href="" class="black-link edit-post">Edit post</a>
                     </div>
 E;
             }
@@ -265,7 +265,7 @@ SM;
                             <div class="sub-options-container sub-options-container-style-2" style="z-index: 1; width: 129px; top: 30px; left: -100px; padding: 4px">
                                 $post_owner_actions
                                 <div class="sub-option-style-2">
-                                    <a href="" class="black-link hide-post">Gönderiyi Gizle</a>
+                                    <a href="" class="black-link hide-post">Hide post</a>
                                 </div>
                             </div>
                         </div>
@@ -292,10 +292,10 @@ SM;
                         </div>
                     </div>
                     <div class="react-on-opost-buttons-container">
-                        <a href="" class="$like_class post-bottom-button like-button">Beğen</a>
-                        <a href="" class="white-comment-back post-bottom-button write-comment-button">Yorum Yap</a>
+                        <a href="" class="$like_class post-bottom-button like-button">Like</a>
+                        <a href="" class="white-comment-back post-bottom-button write-comment-button">Comment</a>
                         <div class="relative share-button-container">
-                            <a href="" class="reply-back post-bottom-button share-button">Paylaş</a>
+                            <a href="" class="reply-back post-bottom-button share-button">Share</a>
                             <div class="share-animation-container flex-row-column">
                                 <div class="share-animation-outer-circle-container">
                                     
@@ -320,7 +320,7 @@ SM;
                                 </div>
                                 <div class="comment-input-form-wrapper">
                                     <form action="" method="POST" class="comment-form relative">
-                                        <input type="text" name="comment" autocomplete="off" placeholder="Yorum Yaz" class="comment-style comment-input">
+                                        <input type="text" name="comment" autocomplete="off" placeholder="Write a comment .." class="comment-style comment-input">
                                     </form>
                                 </div>
                             </div>

@@ -92,6 +92,6 @@ class Like {
     }
 
     public function toString() {
-        return 'Post with id: ' . $this->post_id . " liked by user id: " . $this->user_id . " at: " . $this->like_date . "<br>";
+        return 'Post with id: ' . $this->post_id . " and owner of id: " . $this->post_owner . " published at: " . $this->post_date . "<br>";
     }
 }
