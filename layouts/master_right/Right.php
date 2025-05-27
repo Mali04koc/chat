@@ -12,14 +12,20 @@ use classes\Config;
                 $user_name = substr($user_name, 0, 15) . " ..";
             }
 
-            $now = strtotime(date("Y/m/d h:i:s"));
+            $now = time();
             $last_active_date = strtotime($user->getPropertyValue("last_active_update"));
-            $interval  = abs($last_active_date - $now);
-            $minutes   = round($interval / 60);
+            
+            // Kullanıcı aktif mi kontrolü (son aktiflik 5 dakika içinde ise aktif)
+            $isActive = false;
+            if (!empty($user->getPropertyValue("last_active_update"))) {
+                // 5 dakika (300 saniye) içinde aktifse
+                if ($now - $last_active_date <= 300) {
+                    $isActive = true;
+                }
+            }
 
-            $online_status = ($minutes < 5) ? "online.png" : "offline.png";
-
-            // Here we need to implement some code to see if the yuser is online or not
+            $online_status = $isActive ? "online.png" : "offline.png";
+            $status_text = $isActive ? "Online" : "Offline";
 
             echo <<<EOS
             <div class="contact-user">
@@ -34,7 +40,7 @@ use classes\Config;
                         <input type="hidden" class="uid" value="$user_id">
                         <input type="hidden" class="current" value="$current_user_id">
                     </div>
-                    <img src="public/assets/images/icons/$online_status" class="image-style-4 contact-user-connection-icon" alt="">
+                    <img src="public/assets/images/icons/$online_status" class="image-style-4 contact-user-connection-icon" alt="" title="$status_text">
                 </div>
             </div>
 EOS;
