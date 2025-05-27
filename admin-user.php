@@ -238,8 +238,20 @@ $users = $query->results();
                                 <td><?= htmlspecialchars($user->email) ?></td>
                                 <td><?= htmlspecialchars($user->joined) ?></td>
                                 <td><?= htmlspecialchars($user->bio ?? 'Boş') ?></td>
-                                <td><?= htmlspecialchars($user->profile_image ?? 'Boş') ?></td>
-                                <td><?= htmlspecialchars($user->background_image ?? 'Boş') ?></td>
+                                <td>
+                                    <?php if (!empty($user->picture)): ?>
+                                        <img src="<?= htmlspecialchars($user->picture) ?>" alt="Profil" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                                    <?php else: ?>
+                                        Boş
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php if (!empty($user->cover)): ?>
+                                        <img src="<?= htmlspecialchars($user->cover) ?>" alt="Kapak" style="width: 100px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                    <?php else: ?>
+                                        Boş
+                                    <?php endif; ?>
+                                </td>
                                 <td>
                                     <button class="delete-btn" data-id="<?= htmlspecialchars($user->id) ?>">Ban</button>
                                 </td>

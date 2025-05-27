@@ -151,7 +151,7 @@ if(isset($_POST["save-changes"])) {
                 IMPORTANT: If the user change the cover or picture or both but not username, we don't have to rename the directory !
                 Notice here, if the user has already a picture, its path is stored with the older username, so we use $username not $new_username
             */
-            $profilePicturesDir = 'data/users/' . $username . "/media/pictures/";
+           $profilePicturesDir = 'data/users/' . $username . "/media/pictures/";
             $coversDir = 'data/users/' . $username . "/media/covers/";
 
             // Here we check if the user change the cover again; if so it is valide because we already check it using validator
@@ -164,17 +164,24 @@ if(isset($_POST["save-changes"])) {
                 $file = $_FILES["cover"]["name"];
                 $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
 
+                // Create directory if it doesn't exist
+                if (!file_exists($coversDir)) {
+                    mkdir($coversDir, 0777, true);
+                }
+
                 $targetFile = $coversDir . $generatedName . $original_extension;
+                
+                // Add error logging
+                error_log("Attempting to upload cover to: " . $targetFile);
+                error_log("Upload error code: " . $_FILES['cover']['error']);
+                
                 if (move_uploaded_file($_FILES["cover"]["tmp_name"], $targetFile)) {
-                    /*
-                        Here we don't have to store the path with the older username, but we need to change the username in the path
-                        to the new username so that we can access it later successfully, otherwise we'll get errors while fetcheing
-                        Notice we'll change the folder name just after moving the image to the folder
-                    */
                     $new_target = 'data/users/' . $new_username . "/media/covers/" . $generatedName . $original_extension;
                     $user->setPropertyValue("cover", $new_target);
+                    error_log("Cover upload successful");
                 } else {
-                    $validator->addError("Üzgünüz, kapak fotoğrafınız yüklenirken bir hata oluştu.");
+                    error_log("Cover upload failed. PHP error: " . error_get_last()['message']);
+                    $validator->addError("Üzgünüz, kapak fotoğrafınız yüklenirken bir hata oluştu. Hata kodu: " . $_FILES['cover']['error']);
                 }
             }
             if(file_exists($_FILES['avatar']['tmp_name']) && is_uploaded_file($_FILES['avatar']['tmp_name'])) {
@@ -186,20 +193,27 @@ if(isset($_POST["save-changes"])) {
                 $file = $_FILES["avatar"]["name"];
                 $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
 
+                // Create directory if it doesn't exist
+                if (!file_exists($profilePicturesDir)) {
+                    mkdir($profilePicturesDir, 0777, true);
+                }
+
                 $targetFile = $profilePicturesDir . $generatedName . $original_extension;
+                
+                // Add error logging
+                error_log("Attempting to upload avatar to: " . $targetFile);
+                error_log("Upload error code: " . $_FILES['avatar']['error']);
+                
                 if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $targetFile)) {
-                    /*
-                        Here we don't have to store the path with the older username, but we need to change the username in the path
-                        to the new username so that we can access it later successfully, otherwise we'll get errors while fetcheing
-                        Notice we'll change the folder name just after moving the image to the folder
-                    */
                     $new_target = 'data/users/' . $new_username . "/media/pictures/" . $generatedName . $original_extension;
                     $user->setPropertyValue("picture", $new_target);
+                    error_log("Avatar upload successful");
                 } else {
-                    $validator->addError("Üzgünüz, profil fotoğrafınız yüklenirken bir hata oluştu.");
+                    error_log("Avatar upload failed. PHP error: " . error_get_last()['message']);
+                    $validator->addError("Üzgünüz, profil fotoğrafınız yüklenirken bir hata oluştu. Hata kodu: " . $_FILES['avatar']['error']);
                 }
             }
-
+            
             if($new_username != $username) {
                 // Here we need to give recursive function the directory of the data folder
                 $old_user_data_dir = __DIR__ . '/data/users/' . $username;

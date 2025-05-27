@@ -24,11 +24,11 @@ class Search {
 
         if($follow->fetch_follow()) {
             $follow_btn = <<<F_BTN
-                <input type="submit" class="button-style-9 follow-button followed-user" value="Followed" style="margin-left: 4px; font-weight: 400">
+                <input type="submit" class="button-style-9 follow-button followed-user" value="Takip Ediliyor" style="margin-left: 4px; font-weight: 400">
             F_BTN;
         } else {
             $follow_btn = <<<F_BTN
-                <input type="submit" class="button-style-9 follow-button follow-user" value="Follow" style="margin-left: 4px; font-weight: 400">
+                <input type="submit" class="button-style-9 follow-button follow-user" value="Takip Et" style="margin-left: 4px; font-weight: 400">
             F_BTN;
         }
 

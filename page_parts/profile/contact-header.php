@@ -28,21 +28,21 @@
                 if($follow->fetch_follow()) {
                     $follow_unfollow = <<<EOS
                         <div class="sub-option-style-2 post-to-option">
-                            <label for="" class="flex padding-back-style-1 unfollow-black follow-label">Unfollow</label>
-                            <input type="submit" class="button-style-9-black follow-button" value="Unfollow" style="margin-left: 8px; font-weight: 400">
+                            <label for="" class="flex padding-back-style-1 unfollow-black follow-label">Takipten Çık</label>
+                            <input type="submit" class="button-style-9-black follow-button" value="Takipten Çık" style="margin-left: 8px; font-weight: 400">
                         </div>
 EOS;
             ?>
-            <input type="submit" class="button-style-9 follow-button followed-user" value="Followed" style="margin-left: 4px; font-weight: 400">
+            <input type="submit" class="button-style-9 follow-button followed-user" value="Takip Ediliyor" style="margin-left: 4px; font-weight: 400">
             <?php } else {
                 $follow_unfollow = <<<EOS
                     <div class="sub-option-style-2 post-to-option">
-                        <label for="" class="flex padding-back-style-1 follow-black follow-label">Follow</label>
-                        <input type="submit" class="button-style-9-black follow-button" value="Follow" style="margin-left: 8px; font-weight: 400">
+                        <label for="" class="flex padding-back-style-1 follow-black follow-label">Takip Et</label>
+                        <input type="submit" class="button-style-9-black follow-button" value="Takip Et" style="margin-left: 8px; font-weight: 400">
                     </div>
 EOS;            
             ?>
-            <input type="submit" class="button-style-9 follow-button follow-user" value="Follow" style="margin-left: 4px; font-weight: 400">
+            <input type="submit" class="button-style-9 follow-button follow-user" value="Takip Et" style="margin-left: 4px; font-weight: 400">
             <?php } ?>
         </form>
 
@@ -66,21 +66,21 @@ EOS;
 
                 if($is_blocked) {
                     echo <<<EOS
-                        <input type="submit" class="button-style-9 block-user unblock-user-back" value="Unblock" style="margin-left: 8px; font-weight: 400">
+                        <input type="submit" class="button-style-9 block-user unblock-user-back" value="Bloğu Kaldır" style="margin-left: 8px; font-weight: 400">
 EOS;
                 } 
                 if($is_friend){
                     echo <<<EOS
                         <div class="relative">
-                            <input type="submit" class="button-style-9 added-user-back button-with-suboption friend-state-button" value="Friend" style="margin-left: 8px; font-weight: 400">
+                            <input type="submit" class="button-style-9 added-user-back button-with-suboption friend-state-button" value="Arkadaş" style="margin-left: 8px; font-weight: 400">
                             <div class="sub-options-container sub-options-container-style-2" style="top: 40px; z-index: 3">
                                 <div class="paragraph-wrapper-style-1">
                                     <p class="label-style-2">Friend options</p>
                                 </div>
                                 <div class="options-container-style-1">
                                     <div class="sub-option-style-2 post-to-option">
-                                        <label for="" class="flex padding-back-style-1 unfriend-black">Unfriend</label>
-                                        <input type="submit" class="button-style-9-black unfriend" value="Unfriend" style="margin-left: 8px; font-weight: 400">
+                                        <label for="" class="flex padding-back-style-1 unfriend-black">Arkadaşlıktan Çıkar</label>
+                                        <input type="submit" class="button-style-9-black unfriend" value="Arkadaşlıktan Çıkar" style="margin-left: 8px; font-weight: 400">
                                     </div>
                                 </div>
                                 <div class="options-container-style-1">
@@ -92,17 +92,17 @@ EOS;
 EOS;
                 } else if($is_pending) {
                     echo <<<EOS
-                        <input type="submit" class="button-style-9 add-user unfriend-white-back" value="Cancel Request" style="margin-left: 8px; font-weight: 400">
+                        <input type="submit" class="button-style-9 add-user unfriend-white-back" value="İsteği İptal Et" style="margin-left: 8px; font-weight: 400">
 EOS;
                 } else if($wait_your_accept) {
                     echo <<<EOS
-                        <input type="submit" class="button-style-9 accept-user add-user-back" value="Accept Request" style="margin-left: 8px; font-weight: 400">
-                        <input type="submit" class="button-style-9 decline-user unfriend-white-back" value="Decline Request" style="margin-left: 8px; font-weight: 400">
+                        <input type="submit" class="button-style-9 accept-user add-user-back" value="İsteği Kabul Et" style="margin-left: 8px; font-weight: 400">
+                        <input type="submit" class="button-style-9 decline-user unfriend-white-back" value="İsteği Reddet" style="margin-left: 8px; font-weight: 400">
 EOS;
                 }
                 else {
                     echo <<<EOS
-                        <input type="submit" class="button-style-9 add-user add-user-back" value="Add" style="margin-left: 8px; font-weight: 400">
+                        <input type="submit" class="button-style-9 add-user add-user-back" value="Ekle" style="margin-left: 8px; font-weight: 400">
 EOS;
                 }
                 

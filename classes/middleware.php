@@ -24,7 +24,8 @@ class AuthMiddleware {
         'admin-search.php',
         'admin-user.php',
         'admin-posts.php',
-        'admin-activity.php'
+        'admin-activity.php',
+        'admin-profile.php'
     ];
 
     public function __construct() {
@@ -35,15 +36,12 @@ class AuthMiddleware {
     public function handle() {
         // Check if user is logged in
         if (!$this->_user->isLoggedIn()) {
-            // Login sayfalarında değilsek yönlendir
-            if (!strpos($_SERVER['REQUEST_URI'], 'login.php') && 
-                !strpos($_SERVER['REQUEST_URI'], 'log-header.php') && 
-                !strpos($_SERVER['REQUEST_URI'], 'signing.php')) {
+            // Sadece login sayfasında değilsek yönlendir
+            if (!strpos($_SERVER['REQUEST_URI'], 'login.php')) {
                 \classes\Session::flash('danger', 'Önce giriş yapmalısınız!');
                 \classes\Redirect::to('login/login.php');
                 exit;
             }
-            return false;
         }
 
         $userType = $this->getUserType();
@@ -51,21 +49,27 @@ class AuthMiddleware {
 
         // Admin kullanıcılar için kontrol
         if ($userType === 2) {
-            // Admin sadece admin sayfalarına erişebilir
-            if (!in_array($currentPage, $this->type2Pages) && 
-                !strpos($_SERVER['REQUEST_URI'], 'login.php') && 
-                !strpos($_SERVER['REQUEST_URI'], 'log-header.php') && 
-                !strpos($_SERVER['REQUEST_URI'], 'signing.php')) {
+            // Eğer admin, normal kullanıcı sayfalarına erişmeye çalışıyorsa
+            if (in_array($currentPage, $this->type1Pages)) {
                 \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
                 \classes\Redirect::to('admin.php');
-                return false;
+                exit;
             }
-        } else {
-            // Normal kullanıcılar admin sayfalarına erişemez
-            if (in_array($currentPage, $this->type2Pages)) {
+            // Admin sayfalarına erişim kontrolü
+            if (!in_array($currentPage, $this->type2Pages)) {
+                \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
+                \classes\Redirect::to('admin.php');
+                exit;
+            }
+        }
+
+        // Normal kullanıcılar için kontrol
+        if ($userType === 1) {
+            // Eğer sayfa type1Pages listesinde yoksa
+            if (!in_array($currentPage, $this->type1Pages)) {
                 \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
                 \classes\Redirect::to('index.php');
-                return false;
+                exit;
             }
         }
 
@@ -73,9 +77,11 @@ class AuthMiddleware {
     }
 
     private function getUserType() {
-        if ($this->_user->isLoggedIn()) {
-            return $this->_user->getPropertyValue("user_type");
+        $userId = $this->_user->getPropertyValue("id");
+        $result = $this->_db->query("SELECT user_type FROM user_info WHERE id = ?", [$userId]);
+        if ($result && $result->count()) {
+            return (int)$result->results()[0]->user_type;
         }
-        return null;
+        return 1; // Default to type 1 if not found
     }
 }

@@ -84,7 +84,7 @@
                     <div style="padding: 8px">
                         <div class="flex-space">
                             <h1 class="title-style-4">Aramalar</h1>
-                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">daha fazla gör</a>
+                            <a href="<?php echo Config::get("root/path") . "people.php?q=" . trim(htmlspecialchars($searchKeyword)); ?>" class="link-style-2">Daha Fazlasını Göster</a>
                         </div>
                         <p class="label-style-2">Sonuç <span>
                             <?php echo ($number_of_users > $showingNumber) ? $showingNumber : $number_of_users; ?>
@@ -109,7 +109,7 @@
                     <div style="padding: 8px">
                         <div class="flex-space">
                             <h1 class="title-style-4">Gruplar</h1>
-                            <a href="" class="link-style-2">daha fazla gör</a>
+                            <a href="" class="link-style-2">Daha Fazlasını Göster</a>
                         </div>
                         <p class="label-style-2">Sonuç <span>4</span> / <span>7</span> gösteriliyor</p>
                     </div>

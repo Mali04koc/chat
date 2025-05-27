@@ -90,8 +90,8 @@ EOS;
                                 </div>
                             </div>
                         </div>
-                        <input type="text" form="send-message-form" placeholder="Type a new message" id="chat-text-input" class="chat-input-style send-button" style="padding-left: 40px">
-                        <input type="submit" value="send" form="send-message-form" id="send-message-button">
+                        <input type="text" form="send-message-form" placeholder="Yeni mesaj gönder..." id="chat-text-input" class="chat-input-style send-button" style="padding-left: 40px">
+                        <input type="submit" value="Gönder" form="send-message-form" id="send-message-button">
                     </div>
                 <div>
 CHAT_SECTION;
@@ -116,7 +116,7 @@ CHAT_SECTION;
                             <div class="sub-options-container sub-options-container-style-2" style="z-index: 1; top: 35px; width: 126px; left: -4px; top: -54px">
                                 <div class="options-container-style-1 black">
                                     <div class="sub-option-style-2">
-                                        <a href="" class="black-link delete-current-user-message">Delete message</a>
+                                        <a href="" class="black-link delete-current-user-message">Mesajı Sil</a>
                                         <input type="hidden" value="$message_id" class="message_id">
                                     </div>
                                 </div>
