@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f0018dfe-db7e-420d-92ee-05dfec6f4192" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classes/middleware.php" beforeDir="false" afterPath="$PROJECT_DIR$/classes/middleware.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/init.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/init.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/rest_init.php" beforeDir="false" afterPath="$PROJECT_DIR$/core/rest_init.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/post-viewer.php" beforeDir="false" afterPath="$PROJECT_DIR$/post-viewer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/profile.php" beforeDir="false" afterPath="$PROJECT_DIR$/profile.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.php" beforeDir="false" afterPath="$PROJECT_DIR$/settings.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable path="composer" />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;AliFurkanOZ&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AliFurkanOZ/chat.git&quot;,
+    &quot;accountId&quot;: &quot;677aca54-db49-4bf5-81f6-d18ebbf5ab05&quot;
+  }
+}</component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/mailgun/mailgun-php" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/guzzle/guzzle" />
+    </include_path>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="2xJYH0c6ozp28eJEdPxeoU6Zdii" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;PHP Script.profile.php.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/alifu/OneDrive/Masaüstü/chat2&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-PS-251.25410.148" />
+        <option value="bundled-php-predefined-a98d8de5180a-c5828cf854d9-com.jetbrains.php.sharedIndexes-PS-251.25410.148" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f0018dfe-db7e-420d-92ee-05dfec6f4192" name="Changes" comment="" />
+      <created>1747657552922</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1747657552922</updated>
+      <workItem from="1747657555165" duration="66000" />
+      <workItem from="1747657631582" duration="58000" />
+      <workItem from="1747734211002" duration="38000" />
+      <workItem from="1747812482483" duration="71000" />
+      <workItem from="1747812674291" duration="115000" />
+      <workItem from="1747813092497" duration="872000" />
+      <workItem from="1747817676485" duration="475000" />
+      <workItem from="1747818385626" duration="3000" />
+      <workItem from="1747818584083" duration="86000" />
+      <workItem from="1747818776329" duration="558000" />
+      <workItem from="1747819360179" duration="1082000" />
+      <workItem from="1747822851160" duration="565000" />
+      <workItem from="1747823805481" duration="4002000" />
+      <workItem from="1747828248580" duration="98000" />
+      <workItem from="1747830544932" duration="98000" />
+      <workItem from="1747830674291" duration="6631000" />
+      <workItem from="1747907208193" duration="171000" />
+      <workItem from="1747908889858" duration="7959000" />
+      <workItem from="1747920108657" duration="3893000" />
+      <workItem from="1747998054676" duration="375000" />
+      <workItem from="1748000219157" duration="714000" />
+      <workItem from="1748001721300" duration="403000" />
+      <workItem from="1748290755130" duration="579000" />
+      <workItem from="1748330489743" duration="21000" />
+      <workItem from="1748330653384" duration="348000" />
+      <workItem from="1748333800818" duration="318000" />
+      <workItem from="1748335583789" duration="5000" />
+      <workItem from="1748336012287" duration="19000" />
+      <workItem from="1748336060945" duration="19000" />
+      <workItem from="1748336100023" duration="7000" />
+      <workItem from="1748339389988" duration="738000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

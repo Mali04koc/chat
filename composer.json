@@ -1,0 +1,20 @@
+{
+    "name": "hostname47/composer",
+    "require": {
+        "mailgun/mailgun-php": "^4.3",
+        "guzzlehttp/guzzle": "^7.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "classes\\": "classes/",
+            "models\\": "models/",
+            "Mailgun\\": "Mailgun/",
+            "layouts\\": "layouts/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
+    }
+}
