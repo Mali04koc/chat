@@ -14,12 +14,20 @@ use models\{User, Message};
                 $user_name = substr($user_name, 0, 25) . " ..";
             }
 
-            $now = strtotime(date("Y/m/d h:i:s"));
+            $now = time();
             $last_active_date = strtotime($user->getPropertyValue("last_active_update"));
-            $interval  = abs($last_active_date - $now);
-            $minutes   = round($interval / 60);
+            
+            // Kullanıcı aktif mi kontrolü (son aktiflik 2 dakika içinde ise aktif)
+            $isActive = false;
+            if (!empty($user->getPropertyValue("last_active_update"))) {
+                // 2 dakika (120 saniye) içinde aktifse
+                if ($now - $last_active_date <= 120) {
+                    $isActive = true;
+                }
+            }
 
-            $online_status = ($minutes < 5) ? "online.png" : "offline.png";
+            $online_status = $isActive ? "online.png" : "offline.png";
+            $status_text = $isActive ? "Online" : "Offline";
 
             echo <<<EOS
             <div class="friends-chat-item">
@@ -27,7 +35,7 @@ use models\{User, Message};
                     <img src="$user_picture" class="contact-user-picture" alt="">
                 </div>
                 <p class="regular-text" style="margin-left: 8px">$user_name</p>
-                <img src="public/assets/images/icons/$online_status" class="image-style-4 right-pos-margin" alt="">
+                <img src="public/assets/images/icons/$online_status" class="image-style-4 right-pos-margin" alt="" title="$status_text">
                 <input type="hidden" class="sender" value="$current_user_id">
                 <input type="hidden" class="receiver" value="$user_id">
             </div>

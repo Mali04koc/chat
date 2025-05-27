@@ -19,7 +19,7 @@ use classes\Config;
             $isActive = false;
             if (!empty($user->getPropertyValue("last_active_update"))) {
                 // 5 dakika (300 saniye) içinde aktifse
-                if ($now - $last_active_date <= 300) {
+                if ($now - $last_active_date <= 120) {
                     $isActive = true;
                 }
             }
