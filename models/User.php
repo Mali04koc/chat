@@ -57,12 +57,6 @@ class User implements \JsonSerializable {
                         Session::flash('danger', 'Oturum süreniz doldu. Lütfen tekrar giriş yapın.');
                     }
                     
-                    // Admin kullanıcılar için cookie'yi de sil
-                    if($this->user_type == 2) {
-                        Cookie::delete($this->cookieName);
-                        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
-                    }
-                    
                     Redirect::to('login/login.php');
                     return;
                 }
@@ -79,6 +73,17 @@ class User implements \JsonSerializable {
                 // Session geçersizse temizle
                 Session::delete($this->sessionName);
                 $this->isLoggedIn = false;
+            }
+        } else if(Cookie::exists($this->cookieName)) {
+            // Beni hatırla cookie'si varsa
+            $hash = Cookie::get($this->cookieName);
+            $hashCheck = $this->db->query("SELECT * FROM users_session WHERE hash = ?", array($hash));
+            
+            if($hashCheck->count()) {
+                $user = $hashCheck->results()[0];
+                if($this->fetchUser("id", $user->user_id)) {
+                    $this->login($this->username, $this->password, true);
+                }
             }
         }
     }
@@ -410,19 +415,21 @@ class User implements \JsonSerializable {
                     Session::put('last_activity', time());
                     $this->isLoggedIn = true; 
                     
-                    // Admin kullanıcılar için "beni hatırla" özelliğini devre dışı bırak
-                    if($this->user_type != 2 && $remember) {
-                        $this->db->query("SELECT * FROM users_session WHERE user_id = ?",
-                            array($this->id));
+                    // Beni hatırla özelliği sadece remember true ise çalışır
+                    if($remember === true) {
+                        // Önce eski hash'i temizle
+                        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
                         
-                        if(!$this->db->count()) {
-                            $hash = Hash::unique();
-                            $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
-                                array($this->id, $hash));
-                        } else {
-                            $hash = $this->db->results()[0]->hash;
-                        }
+                        // Yeni hash oluştur
+                        $hash = Hash::unique();
+                        $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
+                            array($this->id, $hash));
+                            
                         Cookie::put($this->cookieName, $hash, Config::get("remember/cookie_expiry"));
+                    } else {
+                        // Remember false ise cookie ve session kayıtlarını temizle
+                        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
+                        Cookie::delete($this->cookieName);
                     }
                     
                     return true;
@@ -438,11 +445,9 @@ class User implements \JsonSerializable {
         // Kullanıcıyı inaktif yap
         $this->db->query("UPDATE user_info SET last_active_update = NULL WHERE id = ?", array($this->id));
 
-        // Admin kullanıcılar için cookie ve session kayıtlarını temizle
-        if($this->user_type == 2) {
-            $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
-            Cookie::delete($this->cookieName);
-        }
+        // Cookie ve session kayıtlarını temizle
+        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
+        Cookie::delete($this->cookieName);
 
         Session::delete($this->sessionName);
         Session::delete(Config::get("session/tokens/logout"));
