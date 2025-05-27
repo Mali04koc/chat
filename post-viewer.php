@@ -189,7 +189,7 @@ foreach (scandir($directory) as $file) {
                         <a href=""><img src="<?php echo $post_owner_picture ?>" class="poster-image" alt=""></a>
                     </div>
                     <div style="margin-left: 6px;">
-                        <a href="http://127.0.0.1/CHAT/profile.php?username=<?php echo $post_owner_username; ?>" class="post-owner-name"><?php echo $post_owner_fullname; ?> -@<?php echo $post_owner_username ?></a>
+                        <a href="http://localhost/chat/profile.php?username=<?php echo $post_owner_username; ?>" class="post-owner-name"><?php echo $post_owner_fullname; ?> -@<?php echo $post_owner_username ?></a>
                         <div class="row-v-flex">
                             <p class="regular-text"><a href="" class="post-date"><?php echo $post_date; ?></a> <span style="font-size: 14px; color: rgb(78, 78, 78);">.</span></p>
                             <img src="public/assets/images/icons/<?php echo $post_visibility_image_path; ?>.png" class="image-style-8" alt="" style="margin-left: 8px">

@@ -145,7 +145,7 @@
                     <?php if(count($journal_posts) == 0) { ?>
                         <div id="empty-posts-message">
                             <h2>Arkadaş ekle ve onların yeni dünyalarını gör</h1>
-                            <p>Buraya <a href="http://127.0.0.1/CHAT/search.php" class="link" style="color: rgb(66, 219, 66)">tıkla</a> ve arama sayfasına git</p>
+                            <p>Buraya <a href="http://localhost/chat/search.php" class="link" style="color: rgb(66, 219, 66)">tıkla</a> ve arama sayfasına git</p>
                         </div>
                     <?php } else { 
                         foreach($journal_posts as $post) {

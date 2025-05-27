@@ -13,11 +13,13 @@ error_reporting();
 // Here we check if the user is not logged in and we redirect him to login page
 
 $middleware = new \classes\AuthMiddleware();
-$middleware->handle();
+if (!$middleware->handle()) {
+    exit;
+}
 
 if(!$user->getPropertyValue("isLoggedIn")) {
-    Redirect::to("login/login.php");
-}
+   Redirect::to("login/login.php");
+ }
 
 $welcomeMessage = '';
 if(Session::exists("register_success") && $user->getPropertyValue("username") == Session::get("new_username")) {

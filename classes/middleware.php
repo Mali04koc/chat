@@ -35,12 +35,15 @@ class AuthMiddleware {
     public function handle() {
         // Check if user is logged in
         if (!$this->_user->isLoggedIn()) {
-            // Sadece login sayfasında değilsek yönlendir
-            if (!strpos($_SERVER['REQUEST_URI'], 'login.php')) {
+            // Login sayfalarında değilsek yönlendir
+            if (!strpos($_SERVER['REQUEST_URI'], 'login.php') && 
+                !strpos($_SERVER['REQUEST_URI'], 'log-header.php') && 
+                !strpos($_SERVER['REQUEST_URI'], 'signing.php')) {
                 \classes\Session::flash('danger', 'Önce giriş yapmalısınız!');
                 \classes\Redirect::to('login/login.php');
                 exit;
             }
+            return false;
         }
 
         $userType = $this->getUserType();
