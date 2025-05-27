@@ -6,7 +6,12 @@ use models\User;
 
 // kullanıcı bilgilerini tutmak için session başlamadıysa başlatıyoruz
 if (session_status() == PHP_SESSION_NONE) {
+    // Session ayarlarını yapılandır
+    ini_set('session.cookie_lifetime', 86400); // 24 saat
+    ini_set('session.gc_maxlifetime', 86400); // 24 saat
+
     session_start();
+
 }
 
 $GLOBALS["config"] = array(
@@ -33,8 +38,8 @@ $GLOBALS["config"] = array(
         )
     ),
     "root"=> array(
-        'path'=>'http://127.0.0.1/CHAT/',
-        'project_name'=>"CHAT"
+        'path'=>'http://localhost/chat/',
+        'project_name'=>"chat"
     ),
     'mailgun' => [
         'api_key' => 'dbe9d26c33233ca8c080f12f4dd9f76f-e71583bb-20998d10',

@@ -43,6 +43,14 @@ class User implements \JsonSerializable {
             
             if($this->fetchUser("id", $dt)) {
                 $this->isLoggedIn = true;
+                // Session'ı yenile
+                Session::put($this->sessionName, $dt);
+            } else {
+                // Session geçersizse temizle
+                Session::delete($this->sessionName);
+                $this->isLoggedIn = false;
+
+
             }
         }
     }
