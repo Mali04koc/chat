@@ -5,9 +5,14 @@ require_once "C:/xampp/htdocs/chat/core/init.php";
 use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect};
 use models\User;
 
-// Kullanıcı zaten giriş yapmışsa index.php'ye yönlendirilir
+// Kullanıcı zaten giriş yapmışsa uygun sayfaya yönlendirilir
 if ($user->getPropertyValue("isLoggedIn")) {
-    Redirect::to("../index.php");
+    $userType = $user->getPropertyValue("user_type");
+    if ($userType === 2) {
+        Redirect::to("../admin.php");
+    } else {
+        Redirect::to("../index.php");
+    }
 }
 
 $validate = new Validation();
@@ -48,6 +53,24 @@ if (isset($_POST["login"])) {
                if ($result && $result->count()) {
                     $results = $result->results(); // Sonuçları al
                     $userType = (int)$results[0]->user_type; // İlk sonucu al
+                    
+                    // Admin kullanıcılar için oturum süresini kontrol et
+                    if ($userType === 2) {
+                        // Admin oturumu için özel kontrol
+                        if(Session::exists('last_activity')) {
+                            $lastActivity = Session::get('last_activity');
+                            $timeout = 600; // 10 dakika
+                            
+                            if(time() - $lastActivity > $timeout) {
+                                // Oturum süresi dolmuşsa çıkış yap
+                                $user->logout();
+                                Session::flash('danger', 'Güvenlik nedeniyle oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.');
+                                Redirect::to('login.php');
+                                return;
+                            }
+                        }
+                    }
+                    
                     if ($userType === 2) {
                         Redirect::to("../admin.php");
                     } else {

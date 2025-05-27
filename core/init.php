@@ -7,8 +7,8 @@ use models\User;
 // kullanıcı bilgilerini tutmak için session başlamadıysa başlatıyoruz
 if (session_status() == PHP_SESSION_NONE) {
     // Session ayarlarını yapılandır
-    ini_set('session.cookie_lifetime', 86400); // 24 saat
-    ini_set('session.gc_maxlifetime', 86400); // 24 saat
+    ini_set('session.cookie_lifetime', 600); // 10 dakika
+    ini_set('session.gc_maxlifetime', 600); // 10 dakika
 
     session_start();
 

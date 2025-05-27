@@ -41,6 +41,36 @@ class User implements \JsonSerializable {
         if(Session::exists($this->sessionName)) {
             $dt = Session::get($this->sessionName);
             
+            // Session timeout kontrolü
+            if(Session::exists('last_activity')) {
+                $lastActivity = Session::get('last_activity');
+                $timeout = 600; // 10 dakika
+                
+                if(time() - $lastActivity > $timeout) {
+                    // Session süresi dolmuş, kullanıcıyı çıkış yaptır
+                    $this->logout();
+                    
+                    // Admin kullanıcılar için özel mesaj
+                    if($this->user_type == 2) {
+                        Session::flash('danger', 'Güvenlik nedeniyle oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.');
+                    } else {
+                        Session::flash('danger', 'Oturum süreniz doldu. Lütfen tekrar giriş yapın.');
+                    }
+                    
+                    // Admin kullanıcılar için cookie'yi de sil
+                    if($this->user_type == 2) {
+                        Cookie::delete($this->cookieName);
+                        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
+                    }
+                    
+                    Redirect::to('login/login.php');
+                    return;
+                }
+            }
+            
+            // Son aktivite zamanını güncelle
+            Session::put('last_activity', time());
+            
             if($this->fetchUser("id", $dt)) {
                 $this->isLoggedIn = true;
                 // Session'ı yenile
@@ -49,8 +79,6 @@ class User implements \JsonSerializable {
                 // Session geçersizse temizle
                 Session::delete($this->sessionName);
                 $this->isLoggedIn = false;
-
-
             }
         }
     }
@@ -349,48 +377,54 @@ class User implements \JsonSerializable {
 
     
     public function login($email_or_username='', $password='', $remember=false) {
-        // 3 parametreli login fonksiyonu,remember default false
-        //Eğer $this->id tanımlanmışsa (yani kullanıcı nesnesi zaten giriş yapmışsa),
-        // bu kullanıcıyı doğrudan oturumda aktif hale getirir. 
         if($this->id) {
             Session::put($this->sessionName, $this->id);
+            Session::put('last_activity', time());
             return true;
         }
-        // yoksa önce username e göre arar ama strpos ile email_or_username değişkeninde @ bulursa
-        // arama değişkenini emaile döndürür 
         else {
             $fetchBy = "username";
             if(strpos($email_or_username, "@")) {
                 $fetchBy = "email";
             }
             
-            /* zaten arama yapılcak kategori mesela email ve $email_or_usernameden gelen değer mesela
-            mk12334@gmail.com belli.Şimdi fetchUser la o kullanıcıyı çektik
-
-            Sonra onun şifresiyle hashı kıyasladık doğru mu diye,doğruysa sessionı başlattık.isLoggedIn True oldu
-            */
             if($this->fetchUser($fetchBy, $email_or_username)) {
                 if($this->password === Hash::make($password, $this->salt)) {
+                    // Admin kullanıcılar için oturum süresini kontrol et
+                    if($this->user_type == 2) {
+                        // Admin oturumu için özel kontrol
+                        if(Session::exists('last_activity')) {
+                            $lastActivity = Session::get('last_activity');
+                            $timeout = 600; // 10 dakika
+                            
+                            if(time() - $lastActivity > $timeout) {
+                                // Oturum süresi dolmuşsa çıkış yap
+                                $this->logout();
+                                Session::flash('danger', 'Güvenlik nedeniyle oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.');
+                                return false;
+                            }
+                        }
+                    }
+
                     Session::put($this->sessionName, $this->id);
+                    Session::put('last_activity', time());
                     $this->isLoggedIn = true; 
                     
-                    // eğer kullanıcı beni hatırla butonuna bastıysa,ilk kullanıcı idsiyle user_session tablosunda aranır
-                    if($remember) {
+                    // Admin kullanıcılar için "beni hatırla" özelliğini devre dışı bırak
+                    if($this->user_type != 2 && $remember) {
                         $this->db->query("SELECT * FROM users_session WHERE user_id = ?",
                             array($this->id));
                         
-                        // eğer böyle bir kullanıcı yoksa o zaman yeni bir unique hash oluşturup user_sessions tablosuna insert edersin
                         if(!$this->db->count()) {
                             $hash = Hash::unique();
                             $this->db->query('INSERT INTO users_session (user_id, hash) VALUES (?, ?)', 
                                 array($this->id, $hash));
                         } else {
-                            // Eğer varsa böyle biri o zaman kayıtlı hashi alırsın,demek ki daha önceden girmiş ama beni hatırla butonuna basmamış 
                             $hash = $this->db->results()[0]->hash;
                         }
-                         // en sonda tüm bilgilerle cookie oluşturursun
                         Cookie::put($this->cookieName, $hash, Config::get("remember/cookie_expiry"));
                     }
+                    
                     return true;
                 }
             }
@@ -404,10 +438,16 @@ class User implements \JsonSerializable {
         // Kullanıcıyı inaktif yap
         $this->db->query("UPDATE user_info SET last_active_update = NULL WHERE id = ?", array($this->id));
 
-        $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
+        // Admin kullanıcılar için cookie ve session kayıtlarını temizle
+        if($this->user_type == 2) {
+            $this->db->query("DELETE FROM users_session WHERE user_id = ?", array($this->id));
+            Cookie::delete($this->cookieName);
+        }
+
         Session::delete($this->sessionName);
         Session::delete(Config::get("session/tokens/logout"));
-        Cookie::delete($this->cookieName);
+        Session::delete('last_activity');
+        $this->isLoggedIn = false;
     }
     
     // en son ne zaman aktifti

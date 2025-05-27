@@ -51,27 +51,21 @@ class AuthMiddleware {
 
         // Admin kullanıcılar için kontrol
         if ($userType === 2) {
-            // Eğer admin, normal kullanıcı sayfalarına erişmeye çalışıyorsa
-            if (in_array($currentPage, $this->type1Pages)) {
+            // Admin sadece admin sayfalarına erişebilir
+            if (!in_array($currentPage, $this->type2Pages) && 
+                !strpos($_SERVER['REQUEST_URI'], 'login.php') && 
+                !strpos($_SERVER['REQUEST_URI'], 'log-header.php') && 
+                !strpos($_SERVER['REQUEST_URI'], 'signing.php')) {
                 \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
                 \classes\Redirect::to('admin.php');
-                exit;
+                return false;
             }
-            // Admin sayfalarına erişim kontrolü
-            if (!in_array($currentPage, $this->type2Pages)) {
-                \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
-                \classes\Redirect::to('admin.php');
-                exit;
-            }
-        }
-
-        // Normal kullanıcılar için kontrol
-        if ($userType === 1) {
-            // Eğer sayfa type1Pages listesinde yoksa
-            if (!in_array($currentPage, $this->type1Pages)) {
+        } else {
+            // Normal kullanıcılar admin sayfalarına erişemez
+            if (in_array($currentPage, $this->type2Pages)) {
                 \classes\Session::flash('danger', 'Bu sayfaya erişim izniniz yok!');
                 \classes\Redirect::to('index.php');
-                exit;
+                return false;
             }
         }
 
@@ -79,11 +73,9 @@ class AuthMiddleware {
     }
 
     private function getUserType() {
-        $userId = $this->_user->getPropertyValue("id");
-        $result = $this->_db->query("SELECT user_type FROM user_info WHERE id = ?", [$userId]);
-        if ($result && $result->count()) {
-            return (int)$result->results()[0]->user_type;
+        if ($this->_user->isLoggedIn()) {
+            return $this->_user->getPropertyValue("user_type");
         }
-        return 1; // Default to type 1 if not found
+        return null;
     }
 }
