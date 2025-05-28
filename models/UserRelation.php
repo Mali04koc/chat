@@ -30,12 +30,19 @@ class UserRelation {
         $this->to = $data["to"];
         $this->status = $data["status"];
         $this->since = (empty($data["since"]) || !strtotime($data["since"])) ? date("Y/m/d H:i:s") : $data["since"];
+        //strtotime($data["since"]): Geçerli bir tarih olup olmadığını kontrol eder. Geçerli değilse bugünkü tarihi atar.
     }
 
     public function send_request() {
-        // Only send request if there's no existed relation between the two users
+        
         $existed_relation_status = $this->bidirectional_relation_exists();
 
+        /*bidirectional_relation_exists(): Kullanıcılar arasında var olan bir ilişki olup olmadığını kontrol eder.
+
+         Eğer bir ilişki yoksa:
+
+         user_relation tablosuna yeni bir "P" (beklemede) ilişkisi ekler.
+         */
         if(!$existed_relation_status) {
             $this->db->query("INSERT INTO user_relation (`from`, `to`, `status`, `since`) 
                 VALUES (?, ?, ?, ?)", array(
@@ -54,7 +61,7 @@ class UserRelation {
 
     public function cancel_request() {
         /*
-            First we need to check if there's a pending request
+            micro_relation 2 kullanıcı arasında pending beklemede bir istek var mı diye kontrol eder
         */
 
         $pending_request_exists = $this->micro_relation_exists($this->from, $this->to, "P");
@@ -65,32 +72,17 @@ class UserRelation {
     }
 
     public function accept_request() {
-        /*
-            Only accept request if there's a realtion between the two, AND the returned status is P (pending)
-            when the condition is true, we need to update the pending relation record to friend and insert new friend realtion
-            in the other direction. e.g. A send friend request to B, if there's a Pending request between the two in one of the direction, we need to update 
-            that P entry to A to B (friend) and add record -> B to A (friend)
-        */
-        // Only send request if there's no existed relation between the two users
+      
+        // kullanıcılar arasında bir ilişki yoksa
         $existed_relation_status = $this->bidirectional_relation_exists();
         
         if($existed_relation_status === "P") {
-            /* 
-                Here w passed P as argument to update method to tell to update record with:
-                                                                                            from=$this->from
-                                                                                            to=$this->to
-                                                                                            status="P"
-                and change it to be like :
-                                                                                            from=$this->from
-                                                                                            to=$this->to
-                                                                                            status="F"
-            */
-
-            // Update the current direction record
+   
+            // Şu anda isteği gönderenin pending durumu istek kabul edildiğinde friend diye update oldu
             $this->status = "F";
             $this->update("P");
 
-            // Add the other direction record
+            // isteği alan içinde yeni bir ilişki nesnesi oluşturulup değerler atandı
             $other_end = new UserRelation();
             $other_end->set_data(array(
                 'from'=>$this->to,
@@ -107,15 +99,18 @@ class UserRelation {
     }
 
     public function unfriend() {
-        // Only unfriend if there's a relation between the two and it shoulf be friend relationship
+        // F yani friend ilişkisi var mı diye bakar 
         $existed_relation_status = $this->get_relation_by_status("F");
         if($existed_relation_status) {
-            $this->delete_relation("F");
 
+            // varsa ilişkiyi siler
+            $this->delete_relation("F");
+            
+            // sonra ilişkiyi tam tersine çevirir çünkü ilişkiler 2 yönlü 
             $relation = new UserRelation();
             $relation->set_property("from", $this->to);
             $relation->set_property("to", $this->from);
-
+            // diğer yönde de ilişkiyi siler
             $relation->delete_relation("F");
             return true;
         }
@@ -125,15 +120,13 @@ class UserRelation {
 
     public function block() {
         /*
-            This function will check if there's a BLOCK relation between the two; If so then unblock them; Otherwise 
-            from user will block to user.
-            Notice users who are not friends to each others cannot block each others
+          Kullanıcı ile Friend misin yoksa zaten Blocklu mu diye bakar
         */
         $friendship_relation_exists = $this->micro_relation_exists($this->from, $this->to, "F");
         $exists = $this->micro_relation_exists($this->from, $this->to, "B");
 
         if($friendship_relation_exists) {
-            // Unblock
+            // Unblock,block kaydını siler
             if($exists) {
                 $this->db->query("DELETE FROM user_relation WHERE `from` = ? AND `to` = ? AND `status` = ?"
                 ,array(
@@ -176,12 +169,7 @@ class UserRelation {
     }
 
     public function update($status) {
-        /*
-            Notice when we need to update a record in user_relation table we need the status to be updated to be passed
-            as argument to update; in order to have a unique identifier(from, to, $status) to identify the record to be updated
-            Also notice that from and to properties are not meant by update
-        */
-
+       
         $this->db->query("UPDATE user_relation SET `status`=?, `since`=? WHERE `from`=? AND `to`=? AND `status` = ?",
             array(
                 $this->status,
@@ -196,17 +184,14 @@ class UserRelation {
     }
 
     public function delete_relation($status="") {
-        /*
-            This function delete any relation between the two users in from and to properties
-            I added $status parameter; If you don't pass anything to status it will delete every relation between the two;
-            but if you specify the status(for exemple "P") it will only delete the pending friend request
-            When we want to delete a relation record we only need the relation to be present regardless of the type of status returned by bidirectional_relation_exists()
-        */
+        // ilişki var mı ve yukarıda status boş bırakılmış yani istersen f seç o zaman sadece friend bağları silinir
         $existed_relation_status = $this->bidirectional_relation_exists();
         
         if($existed_relation_status) {
             $query = "DELETE FROM user_relation WHERE `from` = ? AND `to` = ?";
+            // status değeri boş değilse sorguyu o değere göre düzenler
             !empty($status) ? $query .= " AND `status` = '$status'" : $query;
+            // aşağıda yukarıdaki sorgu çalışır
             $this->db->query($query, 
             array(
                 $this->from,
@@ -221,8 +206,7 @@ class UserRelation {
 
     public static function get_friends($user_id) {
         /*
-            This function will take user_id and find his friends in relations table and get his frinds in form of users
-            using User class and fetch each user based on his id and return array of friends
+          user_idye göre arkadaş olanları sorgular
         */
 
         DB::getInstance()->query("SELECT * FROM user_relation WHERE `from` = ? AND `status` = 'F'",
@@ -231,6 +215,7 @@ class UserRelation {
         ));
 
         $relations = DB::getInstance()->results();
+        //verilerin store edileceği dizi
         $friends = array();
 
         foreach($relations as $relation) {
@@ -238,7 +223,7 @@ class UserRelation {
 
             $user = new User();
             $user->fetchUser("id", $friend_id);
-
+            
             $friends[] = $user;
         }
 
@@ -286,12 +271,7 @@ class UserRelation {
 
     public function bidirectional_relation_exists() {
         /*
-            this function will check if there's a relation between two users
-            Note: Notice when we perform a check we check in both direction if(there's a relation created from A to B and also from B to A)
-            e.g. user B could send friend request to user A and when we want to check if there's a relation between A and B we need
-            also to check if there's a relation between B to A because in this case It exists between B to A
-            
-            return: returns the type of relation in case a relation exists, otherwise returns false
+            bu function ilişki var mı diye kontrol eder, her 2 yönlüde bakar o yüzden hem from to hem de to from var array içinde
         */
         $this->db->query("SELECT * FROM user_relation WHERE (`from` = ? AND `to` = ?) OR (`from` = ? AND `to` = ?)",
         array(

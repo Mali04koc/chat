@@ -75,6 +75,7 @@ class Like {
         return DB::getInstance()->error() == false ? true : false;
     }
 
+    // postu beğenen kişileri bir dizi içine atıyoruz.
     public function get_post_users_likes_by_post($post_id) {
         $this->db->query("SELECT * FROM `like` WHERE post_id = ?", array($post_id));
         $users = array();

@@ -67,11 +67,10 @@ class Post {
         return DB::getInstance()->count() > 0 ? true : false;
     }
 
-    // Remember to use this function only 
+    // kullanıcın idsini alıp  o kullanıcıyı fetchler ve değerlerini sınıf değişkenlerine atar 
     public function fetchPost($id) {
         $this->db->query("SELECT * FROM post WHERE id = ?", array($id));
 
-        // Here we need to check first if we get a user with the given id before starting assigning values to its properties
         if($this->db->count() > 0) {
             $fetchedPost = $this->db->results()[0];
 
@@ -99,26 +98,21 @@ class Post {
         return DB::getInstance()->results()[0];
     }
 
+    //Burada kullanıcının takip ettiklerinin ve arkadaşlarının postlarını görmemizi sağlıyor
     public static function fetch_journal_posts($user_id) {
-        // Algorithm to fetch jounral posts of a specific user
-
-        // First we get all users relevent to the user's journal
+        // Gösterilcek postları saklayan array
         $fetched_users = array();
 
-        /*
-            We use user_id as from to get all his friend in to column; We will take to column in the result set to fetch his
-            friends' ids
-        */
-        // First we get all his friends
+        // İlk önce UserRelation modelinden arkadaşlarının idlerini alıyoruz
         $friends = UserRelation::get_friends($user_id);
 
-        // second we get the followed users
+        // 2.olarak takip ettiklerinin idlerini alıyoruz
         $followed_users = Follow::get_followed_users($user_id);
         
         $fetched_users = array_merge($friends, $followed_users);
-        // User could be followed and friend at the same time sowe need to be sure that we don't have duplicates
+        // 2 arrayi birleştiriyoruz 
         $fetched_users = Common::unique_multidim_array($fetched_users, "id");
-        // Now we have merge friends along with followed users, all what we need to do is fetch posts of these users
+        // Tekrar eden kullanıcı varsa hem arkadaşı hem takip ettiği onun bir satırı siliyoruz, uniq yapıyoruz.
         $posts = array();
 
         foreach($fetched_users as $friend) {
@@ -130,6 +124,7 @@ class Post {
                 $fetched_posts = DB::getInstance()->results();
     
                 foreach($fetched_posts as $post) {
+                    // Post nesnesi üzerinden her bir id nin post verilerini alıyoruz
                     $f_post = new Post();
     
                     $f_post->post_id = $post->id;
@@ -154,13 +149,14 @@ class Post {
     public static function get($field_name, $field_value) {
         DB::getInstance()->query("SELECT * FROM post WHERE $field_name = ?", array($field_value));
 
-        // Here we will store posts fetched by query method
+        //bilgileri atıcağımız array
         $posts = array();
 
         if(DB::getInstance()->count() > 0) {
             $fetched_posts = DB::getInstance()->results();
 
             foreach($fetched_posts as $post) {
+                //yeni Post nesnesi oluşturup o nesnenin özelliklerini arraye atıyoruz
                 $f_post = new Post();
 
                 $f_post->post_id = $post->id;

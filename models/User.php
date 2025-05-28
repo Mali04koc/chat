@@ -2,7 +2,7 @@
 
 namespace models;
 
-use classes\{Hash, Config, Session, DB, Cookie};
+use classes\{Hash, Config, Session, DB, Cookie, Redirect};
 
 class User implements \JsonSerializable {
     private $db,

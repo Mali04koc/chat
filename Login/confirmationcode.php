@@ -6,7 +6,7 @@
     use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect};
     use models\User;
 
-    // First we check if the user put his email and confirmatin code sent succesfully, if there's something wrong we redirect
+    // email doğrulama kodu alma session aşaması gerçekleşmediyse login.phpye geri at
     if(!Session::exists("email-confirmation")) {
         Redirect::to("login.php");
     }
@@ -25,7 +25,7 @@
 
             if($validate->passed()) {
                 if(Session::get("email-confirmation") == Common::getInput($_POST, "code")) {
-                   // Here the confirmation code is good
+                   // kodu doğruladık artık email-confirmation sessionını geçtik o yüzden siliyoruz ve yeni sessiona yani password-change-allowed sessionına geçiyoruz.
                     Session::delete("email-confirmation");
                     Session::put("password-change-allow", "allowed");
                     Redirect::to("changepassword.php");

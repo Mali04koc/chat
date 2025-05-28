@@ -1,9 +1,32 @@
 <?php
 
 /*
-    IMPORTANT:
-    Because this check is based on a stored resource in the client(hash for remember me feature) and current user(stored in the server)
-    we can't put this script inside the API because the api is restful.
+
+"Remember Me" Özelliği ve İstemci Tarafı Kaynağı (Hash):
+
+"Remember Me" özelliği, kullanıcı giriş yaptıktan sonra oturumunun belirli bir süre boyunca hatırlanmasını sağlar.
+
+Bu genellikle istemci tarafında saklanan bir hash ile yapılır. Bu hash, kullanıcıdan bağımsız olarak istemcide saklanır (örneğin, tarayıcıdaki çerezlerde).
+
+Sunucu Tarafındaki Kullanıcı Durumu:
+
+Sunucu tarafında oturum bilgileri veya kullanıcıya ait bir "aktif kullanıcı" durumu saklanır.
+
+Kullanıcı oturum açarken veya bir işlem yaparken, sunucudaki bu bilgiler doğrulanır.
+
+Sorun:
+
+Bu kontrol hem istemcide saklanan bir kaynağa (hash) hem de sunucuda saklanan bir kaynağa (mevcut kullanıcı) dayalıdır.
+
+RESTful API'ler stateless (durumsuz) olduğundan, sunucu tarafında bir "durum" saklamaz. Yani, istemci ve sunucu arasında "hatırlanan" bir bağlantı olmamalıdır.
+
+RESTful API'ler, her isteği birbirinden bağımsız olarak işler ve bu tür bir kontrol REST prensiplerini ihlal eder.
+
+Sonuç:
+
+Bu kontrolün API'nin bir parçası olmaması gerektiği, çünkü bu kontrolün işleyişi RESTful API'lerin temel durumsuzluk ilkesiyle çelişiyor.
+
+
 */
 
 header("Access-Control-Allow-Origin: *");

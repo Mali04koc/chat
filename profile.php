@@ -356,7 +356,7 @@ PPI;
                     <?php if(count($posts) == 0) { ?>
                         <div id="empty-posts-message">
                             <h2>Arkadaş ekle veya takip et, böylece onların gönderilerini görebilirsin.</h1>
-                            <p> tıkla <a href="http://localhost/chat/search.php" class="link" style="color: rgb(66, 219, 66)">here</a> to go to the search page</p>
+                            <p> Buraya <a href="http://localhost/chat/search.php" class="link" style="color: rgb(66, 219, 66)">Tıkla</a> aramaya gitmek istiyorsan...</p>
                         </div>
                     <?php } else { 
                         foreach($posts as $post) {

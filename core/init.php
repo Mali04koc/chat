@@ -102,7 +102,7 @@ tutuyor bu sayede http://127.0.0.1/CHAT/ ile direkt giriş yapabiliyoruz.
 
 BENİ HATIRLA ÖZELLİĞİ AŞAĞI GİBİ ÇALIŞIYOR:
 
-1-Önce tabbi user modelimizden bir user nesnesi oluşturuyoruz
+1-Önce tabii user modelimizden bir user nesnesi oluşturuyoruz
 2-Cookie::exists fonksiyonu ile cookie var mı diye kontrol ediyoruz
 3-Cookie var ise session var mı diye kontrol ediyoruz.Cookiemiz var ve session yoksa o zaman if
 içine giriyoruz,session zaten olmamalı eğer kullanıcı oturumu açtıysa neden beni hatırla özelliğine 

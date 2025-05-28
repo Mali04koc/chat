@@ -2,6 +2,8 @@
 
 namespace classes;
 
+// cookie sınıfı, çerezlerle ilgili işlemleri yönetmek için kullanılır.
+
 class Cookie {
     public static function exists($name) {
         return (isset($_COOKIE[$name])) ? true : false;

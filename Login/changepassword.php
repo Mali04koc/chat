@@ -6,14 +6,14 @@
     use classes\{DB, Config, Validation, Common, Session, Token, Hash, Redirect};
     use models\User;
 
-    // First we check if the user put his email and confirmatin code sent succesfully, if there's something wrong we redirect
+    //Eğer sessionda hata varsa login.php ye atıyorum.
     if(!Session::exists("password-change-allow")) {
         Redirect::to("login.php");
     }
 
     $validate = new Validation();
     
-    // Empty the flash password change
+    // ve önceki sessionı siliyorum
     Session::delete("Password_changed");
 
     $user->fetchUser("id", Session::get("u_id"));
@@ -25,10 +25,6 @@
                     "name"=>"Password",
                     "required"=>true,
                     "min"=>6
-                    /* (later)
-                    "strength"=>array(
-
-                    )*/
                 ),
                 "password_again"=>array(
                     "name"=>"Repeated password",

@@ -12,30 +12,12 @@ class Validation {
     }
 
     /*
-        IMPORTANT: check function will get $source argument as POST or GET arrays to fetch data from them and an array 
-        of values which are inputs and each of this values has an array of rules as the value like the following :
-        $validate = new Validation();
-
-        $validate->check(array(
-        "firstname"=>array(
-            "required"=>false,
-            "min"=>2,
-            "max"=>50
-        ),
-        "lastname"=>array(
-            "required"=>false,
-            "min"=>2,
-            "max"=>50
-        )
-        ....
-        
-        now we we gonna loop through the array of items and each item has an array of rules so we need also to loop through
-        the rules array and first we need to check if the field is required. if the field is required but the value is missing
-        there's no point to do the rest checks, we just add an error to _errors array
-        if the value is not empty we need to make a switch case for each rule
-        
+      Burada genel bir check var email formatı doğru mu , resim boyutu video boyutu doğru mu gibi  
     */
     public function check($source, $items = array()) {
+
+       //error_reporting(E_ERROR | E_PARSE): Sadece çalışmayı etkileyen ciddi hataların gösterilmesini sağlar. Küçük hatalar (örneğin uyarılar) bastırılır.
+
         error_reporting(E_ERROR | E_PARSE);
 
         if($source === $_FILES) {
@@ -75,7 +57,8 @@ class Validation {
                                 $file = $item;
                                 $allowedVideoExtensions = array(".mp4", ".mov", ".wmv", ".flv", ".avi", ".avchd", ".webm", ".mkv");
 
-                                $original_extension = (false === $pos = strrpos($file, '.')) ? '' : substr($file, $pos);
+                                $img = $_FILES[$file];
+                                $original_extension = (false === $pos = strrpos($img["name"], '.')) ? '' : substr($img["name"], $pos);
                                 $original_extension = strtolower($original_extension);
 
                                 if (!in_array($original_extension, $allowedVideoExtensions))
@@ -158,12 +141,12 @@ class Validation {
             $this->_passed = false;
         }
 
-        // Clearing $_FILES
+        
         return $this;
     }
 
     public function addError($error) {
-        // This will add the error at the end of array
+    
         $this->_errors[] = $error;
     }
 

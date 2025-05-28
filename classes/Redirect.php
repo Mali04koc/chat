@@ -3,8 +3,11 @@
 namespace classes;
 
 class Redirect {
+    // yönlendirme başlangıçta null diye verilmiş
     public static function to($location=null) {
+        // eğer yönlendirme varsa girer
         if(isset($location)) {
+            // eğer yönlendirme sayıysa 404.php sayfama gider
             if(is_numeric($location)) {
                 switch($location) {
                     case 404:
@@ -14,6 +17,7 @@ class Redirect {
                     break;
                 }
             }
+            // eğer normal bir url ise oraya gider
             header("Location: " . $location);
             exit;
         }

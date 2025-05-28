@@ -41,6 +41,8 @@ class Message {
         return DB::getInstance()->count();
     }
 
+    // burada istenen mesaj varsa count>0 olur ve ardından o mesajdaki is_reply gibi db verileri
+    // message classındaki değişkenlere atanır
     public function get_message($property, $value) {
         $this->db->query("SELECT * FROM `message` WHERE `$property` = ?", array($value));
 
@@ -60,6 +62,8 @@ class Message {
         return false;
     }
 
+
+    // message_creator kısmını yani mesaj yazanın idsini döndürüyoruz.
     public static function get_creator_by_id($message_id) {
         DB::getInstance()->query("SELECT message_creator FROM `message` WHERE `id` = ?", array($message_id));
 
@@ -71,6 +75,8 @@ class Message {
         return false;
     }
 
+
+    // burada istenen mesaj varsa count>0 olup o mesajı getirir ama sınıfın değişkenlerini güncellemez
     public static function get_message_obj($property, $value) {
         DB::getInstance()->query("SELECT * FROM `message` WHERE `$property` = ?", array($value));
 
@@ -83,11 +89,8 @@ class Message {
     }
 
     public function add() {
-        /*
-            When we add a message to message table we need also to insert a row to recipient table to specify the receiver
-            of that message
-        */
-
+    
+        // mesajı ekle
         $this->db->query("INSERT INTO `message` 
         (`message_creator`, `message`, `create_date`, `is_reply`, `reply_to`) 
         VALUES (?, ?, ?, ?, ?)", array(
@@ -98,15 +101,13 @@ class Message {
             $this->reply_to,
         ));
 
+        // varsa error onları al
         $message_row_inserted = $this->db->error();
 
-        // GET LAST MESSAGE ID TO GIVE IT TO RECIPIENT TABLE
+        // eklenen mesajın ID sini al
         $last_inserted_message_id = $this->db->pdo()->lastInsertId();
 
-        /* 
-            Here notice that we need to check if the receiver user is subscribed to the channel, and If so then we pass the message
-            to the channel, otherwise we normally store it in the database.
-        */
+       // eklenen mesajı gönderini,alanı,idyi channel tablosuna ekle
         $this->db->query("INSERT INTO `channel` 
         (`sender`, `receiver`, `group_recipient_id`, `message_id`) 
         VALUES (?, ?, ?, ?)", array(
@@ -116,8 +117,10 @@ class Message {
             $last_inserted_message_id
         ));
 
+        //error varsa al
         $channel_row_inserted = $this->db->error();
 
+        // mesaj ilişkisini message_recipienta ekle
         $this->db->query("INSERT INTO `message_recipient` 
         (`receiver_id`, `message_id`, `is_read`) 
         VALUES (?, ?, ?)", array(
@@ -125,12 +128,15 @@ class Message {
             $last_inserted_message_id,
             $this->is_read
         ));
-
+         
+        // error varsa al
         $message_recipient_row_inserted = $this->db->error();
-
+        // her şey düzgün giderse Mesaj ID sini döndür
         return $this->db->error() == false ? $last_inserted_message_id : false;
     }
 
+
+    // Mesaj tablosunda güncelle
     public function update_property($property) {
         $this->db->query("UPDATE `message` SET $property=? WHERE id=?",
         array(
@@ -141,14 +147,14 @@ class Message {
         return ($this->db->error()) ? false : true;
     }
 
+
+
+
+
     public function delete_sended_message() {
-        /*
-            For now this function delete the message for every one, later try to add the posibility to only deleted the
-            message for the sender
-        */
-        // First we delete the message from recipient table
+        // hemen altta açıklaması olan function ile mesajı alıcı tarafından siliyoruz
         $this->delete_received_message();
-        // Then we detach or actually delete the whole message from message table
+        // mesajı gönderen kısmından siliyoruz
         $this->db->query("DELETE FROM `message` WHERE id = ?", array(
             $this->id
         ));
@@ -156,11 +162,11 @@ class Message {
         return ($this->db->error()) ? false : true;
     }
 
+
+
+    // burada sadece mesajı alıcı tarafından siliyoruz
     public function delete_received_message() {
-        /*
-            In this case we just need to delete the message from recipient table because we want to be there in message
-            for the sender to see it. The message will be deleted just from the reeiver of the message
-        */
+    
 
         $this->db->query("DELETE FROM message_recipient WHERE message_id = ?", array(
             $this->id
@@ -169,12 +175,14 @@ class Message {
         return ($this->db->error()) ? false : true;
     }
 
+    //Belirli bir gönderici ve alıcı arasındaki tüm kanal verilerini siler.
     public static function dump_channel($sender, $receiver) {
         DB::getInstance()->query("DELETE FROM channel WHERE sender = ? AND receiver = ?", array($sender, $receiver));
     }
 
+
+    // Belirli bir gönderici ve alıcı arasındaki mesajları getirir.
     public static function getMessages($sender, $receiver) {
-        //$this->db->query("SELECT * FROM `message_recipient` WHERE receiver_id = ? AND message.message_creator = ? ");
         DB::getInstance()->query("SELECT * FROM `message_recipient`
         INNER JOIN `message` 
         ON message.id = message_recipient.message_id 
@@ -215,7 +223,9 @@ class Message {
 
         return $this->db->error() == false ? true : false;
     }
+    // Kullanıcı ile ilgili tüm tartışmaları (discussions) getirir.
 
+    //Kullanım: Bir stored procedure olan sp_get_discussions çağrılır
     public static function get_discussions($user_id) {
         DB::getInstance()->query("CALL sp_get_discussions(?)", array($user_id));
 

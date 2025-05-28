@@ -28,6 +28,8 @@ class Follow {
         $this->followed = $data["followed"];
     }
 
+    // Takip ilişkisi var mı diye bakıyor , eğer takip ilişkisi varsa count>0 olur zaten 
+    // eşleşen kişilerin idsi felan sınıf id değişkenine atanıyor 
     public function fetch_follow() {
         $this->db->query("SELECT * FROM user_follow WHERE follower_id = ? AND followed_id = ?", 
         array(
@@ -48,19 +50,22 @@ class Follow {
         return false;
     }
 
+    //Belirtilen kullanıcıyı takip eden kullanıcıların listesini döner.
     public static function get_user_followers($id) {
         DB::getInstance()->query("SELECT * FROM user_follow WHERE followed_id = ?", array($id));
-
-        // Here we will store posts fetched by query method
+        // followers arrayi oluşturduk listeyi tutacağımız yer
         $followers = array();
 
         if(DB::getInstance()->count() > 0) {
             $fetched_followers = DB::getInstance()->results();
 
             foreach($fetched_followers as $fetched_follower) {
+
+                // kullanıcıların bilgilerini user nesnesinden aldık
                 $follower = new User();
                 $follower->fetchUser("id", $fetched_follower->followed_id);
 
+                //bilgileri diziye ekledik
                 $followers[] = $follower;
             }
         }
@@ -68,6 +73,8 @@ class Follow {
         return $followers;
     }
 
+
+    //Kullanıcının takip ettiği ile takipçi sayılarını buluyor.
     public static function get_user_followers_number($id) {
         DB::getInstance()->query("SELECT * FROM user_follow WHERE followed_id = ?", array($id));
 
@@ -80,10 +87,13 @@ class Follow {
         return DB::getInstance()->count();
     }
 
+
+    // get_follower_users ile aynı mantık
+
     public static function get_followed_users($id) {
         DB::getInstance()->query("SELECT * FROM user_follow WHERE follower_id = ?", array($id));
 
-        // Here we will store posts fetched by query method
+        
         $followed_users = array();
 
         if(DB::getInstance()->count() > 0) {
@@ -100,6 +110,8 @@ class Follow {
         return $followed_users;
     }
 
+
+    // veritabanına bir takip ilişkisi ekler.add butonu 
     public function add() {
         $this->db->query("INSERT INTO user_follow 
         (follower_id, followed_id) 
@@ -110,13 +122,15 @@ class Follow {
 
         return $this->db->error() == false ? true : false;
     }
-
+   
+    // veritabanındaki takip ilişkisini siler
     public function delete() {
         $this->db->query("DELETE FROM user_follow WHERE id = ?", array($this->id));
 
         return ($this->db->error()) ? false : true;
     }
-
+  
+    // takip isteği var mı diye bakar 
     public static function follow_exists($follower, $followed) {
         DB::getInstance()->query("SELECT * FROM user_follow WHERE follower_id = ? AND followed_id = ?", 
         array(

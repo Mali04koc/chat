@@ -3,6 +3,7 @@
 namespace models;
 use classes\{DB};
 
+//Bu sınıf, bir yorum sistemi için gerekli CRUD (Create, Read, Update, Delete) işlemlerini gerçekleştirir.
 class Comment {
     private $db,
     $id,
@@ -14,7 +15,7 @@ class Comment {
 
     public function __construct() {
         $this->db = DB::getInstance();
-        $this->comment_date = date("Y/m/d H:i:s");
+        $this->comment_date = date("Y/m/d H:i:s"); // Varsayılan olarak mevcut değeri atar.
     }
 
     public function get_property($propertyName) {
@@ -52,7 +53,6 @@ class Comment {
             $this->comment_owner,
             $this->post_id,
             $this->comment_date,
-            // Notice we set the edit time to current time because we only call update when we want to edit a comment
             date("Y/m/d H:i:s"),
             $this->comment_text,
             $this->id,
@@ -116,6 +116,6 @@ class Comment {
     }
 
     public function toString() {
-        return 'Post with id: ' . $this->post_id . " and owner of id: " . $this->post_owner . " published at: " . $this->post_date . "<br>";
+        return 'Post with id: ' . $this->post_id . " and owner of id: " . $this->comment_owner . " published at: " . $this->comment_date . "<br>";
     }
 }
